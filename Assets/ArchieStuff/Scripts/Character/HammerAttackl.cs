@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class HammerAttackl : MonoBehaviour
 {
+  
+  //DEPRECATED
+  /*
     private BoxCollider col;
     private float lifespan = 0.1f;
    
@@ -32,5 +35,5 @@ public class HammerAttackl : MonoBehaviour
             }
             enemy.TakeDamage(damage);
         }
-    }
+    }*/
 }

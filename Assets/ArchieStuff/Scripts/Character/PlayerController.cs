@@ -8,6 +8,9 @@ public class PlayerController : MonoBehaviour
 {
  [Header("Player components")]
  [SerializeField] private Rigidbody playerRigidbody;
+ 
+ private static PlayerController _instance; 
+ public static PlayerController Instance {get{return _instance;}}
 
  
  [Header("Input")]
@@ -22,10 +25,7 @@ public class PlayerController : MonoBehaviour
  [SerializeField] private GameObject playerUI;
  [SerializeField] private Slider hpSlider;
  [SerializeField] private TextMeshProUGUI hpText;
-
-
-
-
+ 
  private float camXrot, camYrot;
  public float camSensX, camSensY;
 
@@ -42,23 +42,19 @@ public class PlayerController : MonoBehaviour
 
 [Header("Weapon")]
 
- [SerializeField] Animator hammerAnimator;
-
- private float _chargeTimer;
- private bool _isChargingHammer;
 
  public int hpInvestedIntoWeapon;
 
  private GameObject weaponCreator;
  public GameObject weaponCreatorPrefab;
 
- public GameObject currentWeapon;
- public DissolveAnimator DissolveAnimator;
+ public BaseWeapon EquippedWeapon;
+ 
+ public Transform weaponHolder;
 
- public GameObject hammerHitbox;
 
- private static PlayerController _instance; 
- public static PlayerController Instance {get{return _instance;}}
+
+
 
 
 
@@ -95,8 +91,7 @@ public class PlayerController : MonoBehaviour
   _playerDefaultActions.Enable();
 
   _playerDefaultActions.CreateWeapon.started += OpenCreateWeaponUI;
-  _playerDefaultActions.Mouse1.started += StartHammerCharge;
-  _playerDefaultActions.Mouse1.canceled += EndHammerCharge;
+
  }
 
 
@@ -105,25 +100,12 @@ public class PlayerController : MonoBehaviour
  {
   _playerDefaultActions.Disable();
   _playerDefaultActions.CreateWeapon.started -= OpenCreateWeaponUI;
-  _playerDefaultActions.Mouse1.started -= StartHammerCharge;
-  _playerDefaultActions.Mouse1.canceled -= EndHammerCharge;
-  
-
  }
 
 
  private void Update()
  {
   UpdateUI(); //ONLY HERE FOR DEMO -----> move to event based in future
-  
-  _chargeTimer += _isChargingHammer ? Time.deltaTime : 0;
-
-  if (currentWeapon.activeInHierarchy)
-  {
-   hammerAnimator.SetBool("IsCharging", _isChargingHammer);
-  }
-  
-  
   
  }
 
@@ -138,39 +120,18 @@ public class PlayerController : MonoBehaviour
   HandleLook();
  }
  
- private void StartHammerCharge(InputAction.CallbackContext ctx)
- {
-  if(!currentWeapon.activeInHierarchy) {return;}
-  _isChargingHammer = true;
- }
 
- public void CreateWeaponHitbox()
- {
-  Debug.Log("Weapon hitbox created");
-  Instantiate(hammerHitbox, transform.position, playerCamera.transform.rotation);
- }
-
- private void EndHammerCharge(InputAction.CallbackContext ctx)
- {
-  _isChargingHammer = false;
-  _chargeTimer = 0;
- }
 
  private void OpenCreateWeaponUI(InputAction.CallbackContext obj)
  {
-  if (currentWeapon.activeInHierarchy)
-  {
-   DestroyWeapon();
-   currentWeapon.SetActive(false);
-   return;
-  }
- 
- 
-  weaponCreator.SetActive(true);
+  if (EquippedWeapon != null) { return; }
+
   CanLook = false;
-  
   Cursor.lockState = CursorLockMode.None;
   Cursor.visible = true;
+
+  
+  weaponCreator.SetActive(true);
  }
 
 
@@ -249,42 +210,21 @@ public class PlayerController : MonoBehaviour
   return maxHealth;
  }
 
- public int GetHPInvestedIntoWeapon()
+ public BaseWeapon GetEquippedWeapon()
  {
-  return hpInvestedIntoWeapon;
+  return EquippedWeapon;
  }
 
- public void SetWeaponVariables(int hpInvest)
+ public void EquipWeapon(BaseWeapon weapon)
  {
-  Debug.Log("Hp received: " + hpInvest);
-  if (hpInvest == currentHealth)
-  {
-   hpInvestedIntoWeapon = hpInvest;
-   SetCurrentHealth(currentHealth - (hpInvest-1));
-   
-  }
-  else
-  {
-   hpInvestedIntoWeapon = hpInvest;
-   SetCurrentHealth(currentHealth - hpInvest);
-   
-
-  }
+  this.EquippedWeapon = weapon;
  }
 
- public void DestroyWeapon()
+ public Transform GetWeaponHolder()
  {
-  if (currentHealth + hpInvestedIntoWeapon > maxHealth)
-  {
-   currentHealth = maxHealth;
-  }
-  else
-  {
-   currentHealth += hpInvestedIntoWeapon;
-  }
-  
-  
-  hpInvestedIntoWeapon = 0;
+  return weaponHolder;
  }
+
+
  
 }

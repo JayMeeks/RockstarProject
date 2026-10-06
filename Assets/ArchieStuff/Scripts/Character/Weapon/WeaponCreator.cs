@@ -84,6 +84,8 @@ public class WeaponCreator : MonoBehaviour
 
     private void CreateWeapon(InputAction.CallbackContext ctx)
     {
+     //DEPRECATED
+     /*
         float hpCost = sliderValSnap * 100f;
         Debug.Log("Hpcost: " + hpCost);
         Debug.Log("Weapon created using hp:" + hpCost);
@@ -106,7 +108,7 @@ public class WeaponCreator : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         
-        gameObject.SetActive(false);
+        gameObject.SetActive(false);*/
 
     }
 
