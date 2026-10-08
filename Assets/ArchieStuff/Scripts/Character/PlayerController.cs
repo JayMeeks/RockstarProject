@@ -14,8 +14,8 @@ public class PlayerController : MonoBehaviour
 
  
  [Header("Input")]
- private PlayerInput _playerInput;
- private PlayerInput.PlayerDefaultActions _playerDefaultActions;
+ private PlayerInputA _playerInput;
+ private PlayerInputA.PlayerDefaultActions _playerDefaultActions;
  
  
  [Header("Camera")]
@@ -70,7 +70,7 @@ public class PlayerController : MonoBehaviour
    _instance = this;
    DontDestroyOnLoad(this.gameObject);
 
-   _playerInput = new PlayerInput();
+   _playerInput = new PlayerInputA();
    _playerDefaultActions = _playerInput.PlayerDefault;
 
    CanMove = CanLook = true;
