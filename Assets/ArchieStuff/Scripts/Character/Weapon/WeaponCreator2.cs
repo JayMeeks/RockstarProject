@@ -79,6 +79,23 @@ public class WeaponCreator2 : MonoBehaviour
     private void CreateWeapon(InputAction.CallbackContext obj)
     {
         Debug.Log("Weapon creation initiated");
+
+        int weaponCost = 25;
+
+
+        if ( PlayerController.Instance.TrySpendHealth(weaponCost,out var healthUsed) == false)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            PlayerController.Instance.SetCanLook(true);
+            gameObject.SetActive(false);
+            return;
+        }
+        
+       PlayerController.Instance.DamagePlayer(healthUsed);
+        
+        
+        
         //Again, kind of ugly. Can be improved later if needed
         if (angle is > 45f and < 135f)
         { 

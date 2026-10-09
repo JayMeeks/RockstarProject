@@ -183,6 +183,26 @@ public class PlayerController : MonoBehaviour
   
  }
 
+ public bool TrySpendHealth(int tryHpValue, out int spentHpValue)
+ {
+  if (GetCurrentHealth() > tryHpValue)
+  {
+   spentHpValue = tryHpValue;
+   return true;
+  }
+  else if (GetCurrentHealth() == tryHpValue)
+  {
+   spentHpValue = tryHpValue - 1;
+   return true;
+  }
+  else
+  {
+   spentHpValue = 0;
+   return false;
+  }
+  
+ }
+
 
 //Getters + setters
  public void SetCanLook(bool canLook)
@@ -198,6 +218,23 @@ public class PlayerController : MonoBehaviour
  public int GetCurrentHealth()
  {
   return currentHealth;
+ }
+
+ public void DamagePlayer(int damage)
+ {
+  currentHealth -= damage;
+ }
+
+ public void HealPlayer(int heal)
+ {
+  if (currentHealth + heal >= maxHealth)
+  {
+   currentHealth = maxHealth;
+  }
+  else
+  {
+   currentHealth += heal;
+  }
  }
 
  public void SetMaxHealth(int maxHealth)

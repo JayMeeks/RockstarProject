@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using NUnit.Framework.Internal;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -9,16 +10,32 @@ public class TestWeapon1 : BaseWeapon
     [SerializeField] Animator hammerAnimator;
     private float _chargeTimer;
     private bool _isChargingHammerLight, _isChargingHammerHeavy;
+
+
+
+    [Header("Material")] 
+    [SerializeField]private Material _weaponMaterial;
+    private float _dissolveAlpha;
+    
     
     [Header("Input")]
     private PlayerInput _playerInput;
     private PlayerInput.PlayerDefaultActions _playerDefaultActions;
+
+    [Header("Attacks")]
+    [SerializeField] private GameObject hammerLightAttackHitbox;
+
+    [SerializeField] private GameObject hammerHeavyAttackHitbox;
     
     
     protected void Awake()
     {
         _playerInput = new PlayerInput();
         _playerDefaultActions = _playerInput.PlayerDefault;
+        
+        _weaponMaterial.SetFloat("_saturationAlpha", 1.0f);
+        
+        StartCoroutine(DissolveIn());
     }
 
     protected void OnEnable()
@@ -62,6 +79,11 @@ public class TestWeapon1 : BaseWeapon
     
     private void StartHeavyHammerCharge(InputAction.CallbackContext ctx)
     {
+        if (PlayerController.Instance.TrySpendHealth(heavyAttackHpCost, out var healthUsed) == false)
+        {
+            return;
+        }
+        
         _isChargingHammerHeavy = true;
     }
     
@@ -75,25 +97,50 @@ public class TestWeapon1 : BaseWeapon
     protected override void OnUseLightAttack() //Probably called from animation event?
     {
         currentDurability--;
+        _weaponMaterial.SetFloat("_saturationAlpha", (float)currentDurability/maxDurability);
         Debug.Log("Light attack used");
         
-                    /* public void CreateWeaponHitbox()     --TEMP, stolen from player controller, here as a reminder to myself lol - mid refactor
-             {
-              Debug.Log("Weapon hitbox created");
-              Instantiate(hammerHitbox, transform.position, playerCamera.transform.rotation);
-             }*/
-        
+        //Not happy with how this works atm
+        GameObject weapon = Instantiate(hammerLightAttackHitbox, transform.position, transform.rotation);
+        HammerAttackLight attackData = hammerLightAttackHitbox.GetComponent<HammerAttackLight>();
+        attackData.damage = lightAttackDamage;
+        attackData.hpRestored = playerHpGainOnHit;
         if(currentDurability == 0){OnWeaponBreak();}
     }
 
     protected override void OnUseHeavyAttack() //Probably called from animation event?
     {
+        if (PlayerController.Instance.TrySpendHealth(heavyAttackHpCost, out var healthUsed) == false)
+        {
+            return;
+        }
+        PlayerController.Instance.DamagePlayer(healthUsed);
+        
+        currentDurability--;
+        _weaponMaterial.SetFloat("_saturationAlpha", (float)currentDurability/maxDurability);
         Debug.Log("Heavy attack used");
+        
+        GameObject weapon =  Instantiate(hammerHeavyAttackHitbox, transform.position, transform.rotation);
+        HammerAttackHeavy weaponData = weapon.GetComponent<HammerAttackHeavy>();
+        weaponData.damage = heavyAttackDamage;
+        if(currentDurability == 0){OnWeaponBreak();}
+        
     }
     
     protected override void OnWeaponBreak()
     {
         PlayerController.Instance.EquippedWeapon = null;
         Destroy(gameObject);
+    }
+
+    private IEnumerator DissolveIn()
+    {
+        _dissolveAlpha = 0;
+        while (_dissolveAlpha < 1)
+        {
+            _dissolveAlpha += Time.deltaTime;
+            _weaponMaterial.SetFloat("_dissolveAlphaThreshold", _dissolveAlpha);
+            yield return null;
+        }
     }
 }

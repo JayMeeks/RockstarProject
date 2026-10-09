@@ -1,13 +1,12 @@
 using System;
 using UnityEngine;
 
-public class HammerAttackl : MonoBehaviour
+public class HammerAttackLight : MonoBehaviour
 {
-  
-  //DEPRECATED
-  /*
+
     private BoxCollider col;
     private float lifespan = 0.1f;
+    public int damage, hpRestored;
    
     private void Awake()
     {
@@ -28,12 +27,13 @@ public class HammerAttackl : MonoBehaviour
         if (other.CompareTag($"Enemy"))
         {
             BaseEnemy enemy = other.GetComponent<BaseEnemy>();
-            int damage = PlayerController.Instance.GetHPInvestedIntoWeapon();
-            if (damage == 0)
-            {
-                damage += 5;
-            }
             enemy.TakeDamage(damage);
+
+            if (Vector3.Distance(PlayerController.Instance.transform.position, other.transform.position) < 2f)
+            {
+                PlayerController.Instance.HealPlayer(hpRestored);
+            }
+            
         }
-    }*/
+    }
 }

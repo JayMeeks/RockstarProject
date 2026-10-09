@@ -8,6 +8,8 @@ public abstract class BaseWeapon : MonoBehaviour
     protected int lightAttackDamage, heavyAttackDamage;
     [SerializeField]
     protected int playerHpGainOnHit;
+    [SerializeField]
+     protected int heavyAttackHpCost;
 
 
     protected abstract void OnUseLightAttack();
