@@ -25,6 +25,7 @@ public class WeaponCreator2 : MonoBehaviour
     {
         _playerInput.Enable();
         _playerDefaultActions.Mouse1.started += CreateWeapon;
+        Time.timeScale = 0.1f;
     }
 
 
@@ -33,6 +34,7 @@ public class WeaponCreator2 : MonoBehaviour
     {
         _playerInput.Disable();
         _playerDefaultActions.Mouse1.started -= CreateWeapon;
+        Time.timeScale = 1f;
     }
 
 
