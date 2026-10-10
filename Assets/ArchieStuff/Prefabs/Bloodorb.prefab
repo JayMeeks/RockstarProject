@@ -126,7 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb8287922eccc004e80a3a7bb15b8b41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BloodOrb
-  ChasePlayer: 0
+  ChasePlayer: 1
 --- !u!1 &8552913703011986160
 GameObject:
   m_ObjectHideFlags: 0
