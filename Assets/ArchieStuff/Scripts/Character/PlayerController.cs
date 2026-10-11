@@ -210,6 +210,11 @@ public class PlayerController : MonoBehaviour
   CanLook = canLook;
  }
 
+ public Vector3 GetPlayerForward()
+ {
+  return playerCamera.transform.forward;
+ }
+
  public void SetCurrentHealth(int currentHealth)
  {
   this.currentHealth = currentHealth;

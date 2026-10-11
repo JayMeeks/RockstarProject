@@ -15,6 +15,9 @@ public class WeaponCreator2 : MonoBehaviour
     private PlayerInput _playerInput;
     private PlayerInput.PlayerDefaultActions _playerDefaultActions;
 
+    [Header("Test features")] [SerializeField]
+    private bool UseBulletTime;
+
     public void Awake()
     {
         _playerInput = new PlayerInput();
@@ -25,6 +28,11 @@ public class WeaponCreator2 : MonoBehaviour
     {
         _playerInput.Enable();
         _playerDefaultActions.Mouse1.started += CreateWeapon;
+
+        if (UseBulletTime)
+        {
+            Time.timeScale = 0.2f;
+        }
     }
 
 
@@ -33,6 +41,10 @@ public class WeaponCreator2 : MonoBehaviour
     {
         _playerInput.Disable();
         _playerDefaultActions.Mouse1.started -= CreateWeapon;
+        if (UseBulletTime)
+        {
+            Time.timeScale = 1.0f;
+        }
     }
 
 
