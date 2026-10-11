@@ -43,11 +43,13 @@ namespace Enemies
         private bool _isWaiting;
         private EnemyState _state = EnemyState.Patrolling;
         private float _timeSinceLostPlayer;
+        //private bool leftFloor = false;
 
         private const float TimeBetweenAttacks = 2f;
         //private bool _isAttacking;
         private bool _hasAttacked;
 
+        public bool paused = false;
 
         private void Awake()
         {
@@ -65,48 +67,71 @@ namespace Enemies
         { 
             var distanceToPlayer = Vector3.Distance(player.position, transform.position);
 
-            switch (_state)
+            /* if (_agent.enabled == false)
             {
-                case EnemyState.Patrolling:
-                    Patrol();
-                    if (distanceToPlayer <= detectionRange && CanSeePlayer())
+                bool grounded = GroundCheck();
+                if (grounded)
+                {
+                    if (leftFloor)
                     {
-                        _state = EnemyState.Following;
-                    }
-                    break;
-                
-                case EnemyState.Following:
-                    FollowPlayer();
-                    if (distanceToPlayer <= attackRange)
-                    {
-                        _state = EnemyState.Attacking;
-                        //StartAttack();
-                    }
-                    if (!CanSeePlayer())
-                    {
-                        _timeSinceLostPlayer += Time.deltaTime;
-                        if (_timeSinceLostPlayer >= losePlayerTime)
-                        {
-                            _state = EnemyState.Patrolling;
-                            GoToClosestPatrolPoint();
-                        }
-                    }
-                    else
-                    {
-                        _timeSinceLostPlayer = 0f;
-                    }
-                    break;
-                
-                case EnemyState.Attacking:
-                    Attack();
-                    if (!_hasAttacked && distanceToPlayer > attackRange)
-                    {
-                        _state = EnemyState.Following;
-                        _agent.isStopped = false;
+                        _agent.enabled = true;
+                        leftFloor = false;
                     }
                     
-                    break;
+                }
+                else
+                {
+                    if (!leftFloor)
+                    {
+                        leftFloor = true;
+                    }
+                }
             }
+            */
+
+            switch (_state)
+                {
+                    case EnemyState.Patrolling:
+                        Patrol();
+                        if (distanceToPlayer <= detectionRange && CanSeePlayer())
+                        {
+                            _state = EnemyState.Following;
+                        }
+                        break;
+
+                    case EnemyState.Following:
+                        FollowPlayer();
+                        if (distanceToPlayer <= attackRange)
+                        {
+                            _state = EnemyState.Attacking;
+                            //StartAttack();
+                        }
+                        if (!CanSeePlayer())
+                        {
+                            _timeSinceLostPlayer += Time.deltaTime;
+                            if (_timeSinceLostPlayer >= losePlayerTime)
+                            {
+                                _state = EnemyState.Patrolling;
+                                GoToClosestPatrolPoint();
+                            }
+                        }
+                        else
+                        {
+                            _timeSinceLostPlayer = 0f;
+                        }
+                        break;
+
+                    case EnemyState.Attacking:
+                        Attack();
+                        if (!_hasAttacked && distanceToPlayer > attackRange)
+                        {
+                            _state = EnemyState.Following;
+                            _agent.isStopped = false;
+                        }
+
+                        break;
+                }
+            
 
             //UpdateAnimations();
         }
@@ -142,6 +167,7 @@ namespace Enemies
         private IEnumerator ResetAttack()
         { 
             yield return new WaitForSeconds(TimeBetweenAttacks);
+            yield return new WaitUntil(() => !paused);
             _agent.isStopped = false;
             _state = EnemyState.Patrolling;
             _hasAttacked = false;
@@ -173,6 +199,7 @@ namespace Enemies
             _agent.isStopped = true;
         
             yield return new WaitForSeconds(patrolWaitTime);
+            yield return new WaitUntil(() => !paused);
         
             _agent.isStopped = false; 
             GoToRandomPatrolPoint();
@@ -252,6 +279,11 @@ namespace Enemies
             }
 
             return true;
+        }
+
+        private bool GroundCheck()
+        {
+            return Physics.CheckCapsule(transform.position, new Vector3(transform.position.x, transform.position.y - 0.2f, transform.position.z), whatIsGround);
         }
     }
 }

@@ -1072,7 +1072,7 @@ GameObject:
   - component: {fileID: 1223095369}
   - component: {fileID: 1223095368}
   - component: {fileID: 1223095372}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2067,8 +2067,8 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  m_Constraints: 112
+  m_CollisionDetection: 1
 --- !u!95 &2049604945
 Animator:
   serializedVersion: 7
@@ -2098,7 +2098,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2049604935}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8f55f941b9a234d46807edce1c7c2e3d, type: 3}
   m_Name: 
@@ -2118,7 +2118,7 @@ MonoBehaviour:
   attackRange: 5
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 0
@@ -2137,6 +2137,9 @@ MonoBehaviour:
   slider: {fileID: 554399437}
   uiCanvas: {fileID: 1911426424}
   BloodOrb: {fileID: 7349047597775747452, guid: d9fc1c1a7dcd8c04eaf804717ff72024, type: 3}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &2086198271
 GameObject:
   m_ObjectHideFlags: 0
