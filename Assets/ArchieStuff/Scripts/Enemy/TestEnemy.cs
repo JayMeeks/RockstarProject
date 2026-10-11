@@ -65,7 +65,7 @@ public class TestEnemy : BaseEnemy, IDamageable
 
         if (currentHp <= 0)
         {
-            Destroy(gameObject);
+          //  Destroy(gameObject);
         }
     }
 

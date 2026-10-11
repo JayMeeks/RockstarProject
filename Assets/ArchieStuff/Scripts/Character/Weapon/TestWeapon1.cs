@@ -102,7 +102,7 @@ public class TestWeapon1 : BaseWeapon
         
         //Not happy with how this works atm
         GameObject weapon = Instantiate(hammerLightAttackHitbox, transform.position, transform.rotation);
-        HammerAttackLight attackData = hammerLightAttackHitbox.GetComponent<HammerAttackLight>();
+        HammerAttackLight attackData = weapon.GetComponent<HammerAttackLight>();
         attackData.damage = lightAttackDamage;
         attackData.hpRestored = playerHpGainOnHit;
         if(currentDurability == 0){OnWeaponBreak();}
