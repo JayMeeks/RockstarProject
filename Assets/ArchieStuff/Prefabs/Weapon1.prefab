@@ -48,6 +48,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8327678104556843366, guid: 69f992ef71d72b742b85f2edd17db56c, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 6d9d8f37333b40d49a98df14e42f594f, type: 2}
     - target: {fileID: 919132149155446097, guid: 69f992ef71d72b742b85f2edd17db56c, type: 3}
       propertyPath: m_Name
       value: Weapon1
@@ -107,4 +111,8 @@ MonoBehaviour:
   lightAttackDamage: 15
   heavyAttackDamage: 30
   playerHpGainOnHit: 5
+  heavyAttackHpCost: 10
   hammerAnimator: {fileID: 6768452206847172775}
+  _weaponMaterial: {fileID: 2100000, guid: 6d9d8f37333b40d49a98df14e42f594f, type: 2}
+  hammerLightAttackHitbox: {fileID: 3844871552740267259, guid: f8f7f90f95f486f4a9d634b0177da3d4, type: 3}
+  hammerHeavyAttackHitbox: {fileID: 941059244788198799, guid: c0c0af38886c5bc4d92c81e33426606f, type: 3}
