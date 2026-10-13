@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using Enemies;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class HammerAttackHeavy : MonoBehaviour
 {
@@ -18,11 +20,18 @@ public class HammerAttackHeavy : MonoBehaviour
             {
                 Debug.Log("Applying force to: " + collider.gameObject.name);
                 Rigidbody rb = collider.gameObject.GetComponent<Rigidbody>();
+                NavMeshAgent nma = collider.gameObject.GetComponent<NavMeshAgent>();
+                EnemyController ec = collider.gameObject.GetComponent<EnemyController>();
+                rb.isKinematic = false;
+                nma.enabled = false;
+                ec.paused = true;
+                ec.enabled = false;
                 if (rb == null){Debug.Log("Rigidbody missing from: " + collider.gameObject.name);} 
                 Vector3 dir = collider.transform.position - transform.position;
                 Debug.Log(dir);
                 dir.Normalize();
                 rb.AddForce(Vector3.up * ForceMult, ForceMode.Impulse);
+                
 
                 BaseEnemy enemy = collider.gameObject.GetComponent<BaseEnemy>();
                 enemy.TakeDamage(damage);
