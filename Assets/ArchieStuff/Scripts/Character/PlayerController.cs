@@ -109,7 +109,7 @@ public class PlayerController : MonoBehaviour
   
  }
 
-
+/*
  private void FixedUpdate()
  {
   HandleMovement();
@@ -119,7 +119,7 @@ public class PlayerController : MonoBehaviour
  {
   HandleLook();
  }
- 
+ */
 
 
  private void OpenCreateWeaponUI(InputAction.CallbackContext obj)
@@ -140,7 +140,7 @@ public class PlayerController : MonoBehaviour
   hpText.text = currentHealth.ToString();
   hpSlider.value = (float)currentHealth / (float)maxHealth;
  }
- 
+ /*
 
  private void HandleMovement()
  {
@@ -182,6 +182,7 @@ public class PlayerController : MonoBehaviour
    _moveDirection.Normalize();
   
  }
+ */
 
  public bool TrySpendHealth(int tryHpValue, out int spentHpValue)
  {
