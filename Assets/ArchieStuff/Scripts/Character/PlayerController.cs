@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
@@ -25,6 +27,8 @@ public class PlayerController : MonoBehaviour
  [SerializeField] private GameObject playerUI;
  [SerializeField] private Slider hpSlider;
  [SerializeField] private TextMeshProUGUI hpText;
+
+ [SerializeField] private Material vignette;
  
  private float camXrot, camYrot;
  public float camSensX, camSensY;
@@ -139,6 +143,8 @@ public class PlayerController : MonoBehaviour
  {
   hpText.text = currentHealth.ToString();
   hpSlider.value = (float)currentHealth / (float)maxHealth;
+  
+  
  }
  
 
@@ -228,6 +234,7 @@ public class PlayerController : MonoBehaviour
  public void DamagePlayer(int damage)
  {
   currentHealth -= damage;
+  StartCoroutine(AnimateVignette(Color.red));
  }
 
  public void HealPlayer(int heal)
@@ -240,6 +247,7 @@ public class PlayerController : MonoBehaviour
   {
    currentHealth += heal;
   }
+  StartCoroutine(AnimateVignette(Color.green));
  }
 
  public void SetMaxHealth(int maxHealth)
@@ -265,6 +273,32 @@ public class PlayerController : MonoBehaviour
  public Transform GetWeaponHolder()
  {
   return weaponHolder;
+ }
+
+ private IEnumerator AnimateVignette(Color vignetteColor)
+ {
+  vignette.SetColor("_VignetteColour", vignetteColor);
+  float time  = 0.0f;
+  float startRadius = 1.5f;
+  float endRadius = 0.75f;
+  while (time < 0.2f)
+  {
+   time += Time.deltaTime;
+   vignette.SetFloat("_VignetteRadius",Mathf.Lerp(startRadius, endRadius, time));
+   yield return null;
+  }
+  vignette.SetFloat("_VignetteRadius",endRadius);
+  time = 0.0f;
+  
+  
+  while (time < 0.2f)
+  {
+   time += Time.deltaTime;
+   vignette.SetFloat("_VignetteRadius",Mathf.Lerp(endRadius, startRadius, time));
+   yield return null;
+  }
+  vignette.SetFloat("_VignetteRadius",2.0f);
+
  }
 
 

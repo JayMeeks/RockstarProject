@@ -104,3 +104,4 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+Assets/ArchieStuff/Scripts/Shader/Custom_Vignette.mat
