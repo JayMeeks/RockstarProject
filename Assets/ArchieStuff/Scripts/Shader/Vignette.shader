@@ -16,14 +16,21 @@ Shader "Custom/Vignette"
 
     SubShader
     {
-    //    Tags { "RenderType" = "TransparentCutout" "RenderPipeline" = "UniversalPipeline" "Queue" = "Transparent"}
-        ZWrite On
+         Tags
+        {
+            "RenderPipeline" = "UniversalPipeline"
+            "RenderType" = "Opaque"
+        }       
+        ZWrite Off
+        Ztest Always
+        Cull Off
         Blend SrcAlpha OneMinusSrcAlpha
         
         HLSLINCLUDE
         
          #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-         #include "noise.cginc"
+         #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
+
          
          struct MeshData
             {
@@ -69,7 +76,12 @@ Shader "Custom/Vignette"
                     
             float4 frag (v2f i) : SV_Target
             {
-                float4 baseCol = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, i.uv) * _BaseColor;
+                float4 baseCol = 
+                SAMPLE_TEXTURE2D_X_LOD(_BlitTexture,sampler_LinearClamp, i.uv,_BlitMipLevel);
+                
+                return SAMPLE_TEXTURE2D_X_LOD(_BlitTexture,sampler_LinearClamp, i.uv,_BlitMipLevel);
+                
+               // return float4(i.uv,0,1);
 
                 //Apply vignette
                 float2 centerUVS = (float2 (i.uv * 2 - 1));
