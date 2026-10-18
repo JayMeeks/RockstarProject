@@ -68,7 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9d42bd516981cf4a9f8c82f1d9a13e4, type: 3}
   m_Name: CustomPostProcessRenderFeature
   m_EditorClassIdentifier: Assembly-CSharp::CustomPostProcessRenderFeature
-  m_Active: 1
+  m_Active: 0
   m_shader: {fileID: 4800000, guid: a1763d9c02b3a1a439064e9ca18512d7, type: 3}
   radius: 0.66
   feather: 0.75
