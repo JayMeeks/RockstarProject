@@ -90,7 +90,7 @@ public class WeaponCreator2 : MonoBehaviour
     
     private void CreateWeapon(InputAction.CallbackContext obj)
     {
-        Debug.Log("Weapon creation initiated");
+    
 
         int weaponCost = 25;
 

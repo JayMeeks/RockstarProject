@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3645b92f916b23141894f24866d9dbfc, type: 3}
+  m_Name: DaggerWeaponData
+  m_EditorClassIdentifier: Assembly-CSharp::DaggerWeaponData
+  maxDurability: 10
+  playerHpGainOnHit: 4
+  heavyAttackHpCost: 5
+  specialAttackHpCost: 5
+  throwSpeedMult: 25
+  maxHeavyRange: 15
+  maxSpecialRange: 20
+  specialForceMult: 3

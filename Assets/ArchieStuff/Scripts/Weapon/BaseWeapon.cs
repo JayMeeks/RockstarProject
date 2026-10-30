@@ -1,19 +1,18 @@
 using UnityEngine;
 
 public abstract class BaseWeapon : MonoBehaviour
-{ 
-    [SerializeField]
-    protected int maxDurability, currentDurability;
-    [SerializeField]
-    protected int lightAttackDamage, heavyAttackDamage;
-    [SerializeField]
-    protected int playerHpGainOnHit;
-    [SerializeField]
-     protected int heavyAttackHpCost;
+{
 
-
+    protected int currentDurability;
+    protected bool weaponEnabled;
+    
     protected abstract void OnUseLightAttack();
     protected abstract void OnUseHeavyAttack();
-
+    protected abstract void OnUseWeaponSpecial();
     protected abstract void OnWeaponBreak();
+
+    public void SetWeaponEnabled(bool enabled)
+    {
+        this.weaponEnabled = enabled;
+    }
 }

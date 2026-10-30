@@ -234,7 +234,7 @@ public class PlayerController : MonoBehaviour
  public void DamagePlayer(int damage)
  {
   currentHealth -= damage;
-  StartCoroutine(AnimateVignette(Color.red));
+ // StartCoroutine(AnimateVignette(Color.red));
  }
 
  public void HealPlayer(int heal)
@@ -247,7 +247,7 @@ public class PlayerController : MonoBehaviour
   {
    currentHealth += heal;
   }
-  StartCoroutine(AnimateVignette(Color.green));
+ // StartCoroutine(AnimateVignette(Color.green));
  }
 
  public void SetMaxHealth(int maxHealth)
@@ -274,6 +274,19 @@ public class PlayerController : MonoBehaviour
  {
   return weaponHolder;
  }
+
+ public void SetWeaponEnabled(bool enabled)
+ {
+  EquippedWeapon.SetWeaponEnabled(enabled);
+ }
+
+ public void SetWeaponVisible(bool visible)
+ {
+  //Could probably cache
+  EquippedWeapon.gameObject.GetComponent<MeshRenderer>().enabled = visible;
+ }
+
+
 
  private IEnumerator AnimateVignette(Color vignetteColor)
  {
