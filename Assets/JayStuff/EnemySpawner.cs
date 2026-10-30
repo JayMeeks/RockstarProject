@@ -40,7 +40,7 @@ public class EnemySpawner : MonoBehaviour
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, radius, enemyLayer);
 
-        return hits.Length < 0;
+        return hits.Length == 0;
     }
 
     public void ActivateSpawner()
