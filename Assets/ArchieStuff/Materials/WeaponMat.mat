@@ -29,7 +29,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _dissolveAlphaThreshold: 1.0003529
+    - _dissolveAlphaThreshold: 1.0004908
     - _saturationAlpha: 0.9
     m_Colors:
     - _BaseColor: {r: 1, g: 0, b: 0, a: 1}

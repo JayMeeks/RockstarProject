@@ -117,7 +117,7 @@ public class HammerWeapon : BaseWeapon
         PlayerController.Instance.DamagePlayer(healthUsed);
 
         Vector3 spawnPos = new Vector3(PlayerController.Instance.transform.position.x,
-            PlayerController.Instance.transform.position.y - 1f, PlayerController.Instance.transform.position.z);
+            PlayerController.Instance.transform.position.y , PlayerController.Instance.transform.position.z);
 
        Quaternion startRot = Quaternion.LookRotation(PlayerController.Instance.GetPlayerForward(), Vector3.up);
 

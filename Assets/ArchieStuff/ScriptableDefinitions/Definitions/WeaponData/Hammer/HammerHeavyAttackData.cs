@@ -13,6 +13,9 @@ public class HammerHeavyAttackData : BaseWeaponAttackData
     [Tooltip("How long wave exists")] 
     [SerializeField] public float WaveLifespan;
     
+    [Tooltip("Max step height")]
+    [SerializeField] public float MaxStepHeight;
+    
     [Tooltip("How strong of a force should be used to send the enemy upwards")] 
     [SerializeField] public float ForceMultiplier;
 

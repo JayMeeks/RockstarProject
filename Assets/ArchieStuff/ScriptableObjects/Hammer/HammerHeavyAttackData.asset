@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: HammerHeavyAttackData
   m_EditorClassIdentifier: Assembly-CSharp::HammerHeavyAttackData
   attackDamage: 10
-  WaveMoveSpeed: 4
-  WaveGrowSpeed: 2
+  WaveMoveSpeed: 10
+  WaveGrowSpeedWidth: 1
+  WaveGrowSpeedHeight: 1
   WaveLifespan: 0.75
+  MaxStepHeight: 0.5
   ForceMultiplier: 15
