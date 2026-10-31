@@ -116,8 +116,21 @@ public class HammerWeapon : BaseWeapon
         }
         PlayerController.Instance.DamagePlayer(healthUsed);
 
-        var attackObj = Instantiate(HeavyAttack,PlayerController.Instance.transform.position,transform.rotation);
-        attackObj.GetComponent<HammerHeavyAttackBehaviour>().Attack(PlayerController.Instance.GetPlayerForward());
+        Vector3 spawnPos = new Vector3(PlayerController.Instance.transform.position.x,
+            PlayerController.Instance.transform.position.y - 1f, PlayerController.Instance.transform.position.z);
+
+       Quaternion startRot = Quaternion.LookRotation(PlayerController.Instance.GetPlayerForward(), Vector3.up);
+
+
+        for (int i = 0; i < 12; i++)
+        {
+          
+            startRot = Quaternion.Euler(0, transform.rotation.eulerAngles.y + i * (360f/12f), 0);
+           
+            var attackObj = Instantiate(HeavyAttack,spawnPos,startRot);
+            attackObj.GetComponent<HammerHeavyAttackBehaviour>().Attack();
+
+        }
        
         
         ReduceDurability();

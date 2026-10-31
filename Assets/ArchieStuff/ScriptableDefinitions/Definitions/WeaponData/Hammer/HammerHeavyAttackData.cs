@@ -8,7 +8,7 @@ public class HammerHeavyAttackData : BaseWeaponAttackData
     [SerializeField] public float WaveMoveSpeed;
     
     [Tooltip("Speed at which the wave grows")] 
-    [SerializeField] public float WaveGrowSpeed;
+    [SerializeField] public float WaveGrowSpeedWidth,WaveGrowSpeedHeight;
     
     [Tooltip("How long wave exists")] 
     [SerializeField] public float WaveLifespan;

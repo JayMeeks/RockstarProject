@@ -64,6 +64,14 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 89278af6d64b7ba4287988b4469b2381, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: e7a8e0e00aaf5ab4cb4535e8c2cee5e4, type: 2}
+    - target: {fileID: -5754084199372789682, guid: 89278af6d64b7ba4287988b4469b2381, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -462981019419857548, guid: 4d68fc4035da8114da2680ba84630db7, type: 3}
     - target: {fileID: 919132149155446097, guid: 89278af6d64b7ba4287988b4469b2381, type: 3}
       propertyPath: m_Name
       value: HammerHeavyAttackQuarter
@@ -105,7 +113,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
-  m_Mesh: {fileID: -8803937527578110353, guid: 89278af6d64b7ba4287988b4469b2381, type: 3}
+  m_Mesh: {fileID: -462981019419857548, guid: 4d68fc4035da8114da2680ba84630db7, type: 3}
 --- !u!114 &1939002214069358107
 MonoBehaviour:
   m_ObjectHideFlags: 0

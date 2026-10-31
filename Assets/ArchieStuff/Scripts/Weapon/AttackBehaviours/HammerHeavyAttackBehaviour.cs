@@ -6,22 +6,19 @@ public class HammerHeavyAttackBehaviour : MonoBehaviour
    public HammerHeavyAttackData data;
 
 
-   public void Attack(Vector3 waveDir)
+   public void Attack( )
    {
-      transform.rotation = Quaternion.LookRotation(waveDir, Vector3.up);
-      transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
-      StartCoroutine(MoveWave(waveDir));
+      StartCoroutine(MoveWave());
    }
 
-   private IEnumerator MoveWave(Vector3 waveDir)
+   private IEnumerator MoveWave()
    {
       float t = 0.0f;
       while (t < data.WaveLifespan)
       {
          t += Time.deltaTime;
-         waveDir.Normalize();
          transform.position += transform.forward * (Time.deltaTime * data.WaveMoveSpeed);
-         transform.localScale += new Vector3( data.WaveGrowSpeed * Time.deltaTime,  data.WaveGrowSpeed * Time.deltaTime,  data.WaveGrowSpeed * Time.deltaTime);
+         transform.localScale += new Vector3( data.WaveGrowSpeedWidth * Time.deltaTime,  data.WaveGrowSpeedHeight * Time.deltaTime,  0);
          yield return null;
       }
       Destroy(gameObject);
