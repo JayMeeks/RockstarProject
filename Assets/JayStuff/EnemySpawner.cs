@@ -8,7 +8,7 @@ public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] private RoomController roomController;
     [SerializeField] private LayerMask enemyLayer;
-    [SerializeField] private float radius;
+    private float radius;
     [SerializeField] private float spawnCooldown;
 
     [SerializeField] private List<WaveClass> waves = new List<WaveClass>();
@@ -18,7 +18,6 @@ public class EnemySpawner : MonoBehaviour
     public event Action OnSubWavesFinished;
 
     private int waveNumber = 0;
-    private int subWaveNumber = 0;
 
     private void OnEnable()
     {
@@ -33,11 +32,13 @@ public class EnemySpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(SpaceAboveSpawner());
+        
     }
 
     private bool SpaceAboveSpawner()
     {
+        radius = transform.localScale.x / 2;
+
         Collider[] hits = Physics.OverlapSphere(transform.position, radius, enemyLayer);
 
         return hits.Length == 0;
@@ -59,14 +60,19 @@ public class EnemySpawner : MonoBehaviour
 
         foreach (SubwaveClass subwave in subwaves)
         {
-            foreach(EnemyClass enemy in waves[waveNumber].subwaves[subWaveNumber].enemies)
+            foreach(EnemyClass enemy in subwave.enemies)
             {
                 while (!SpaceAboveSpawner() && isActiveAndEnabled)
                 {
                     yield return null;
                 }
 
-                Instantiate(enemy.enemyPrefab);
+                GameObject newEnemy = Instantiate(enemy.enemyPrefab, transform.position, transform.rotation);
+
+                FakeEnemy enemyScript = newEnemy.GetComponent<FakeEnemy>();
+
+                enemyScript.SetSpawner(this);
+
                 aliveEnemies++;
 
                 yield return new WaitForSeconds(spawnCooldown);
@@ -76,8 +82,6 @@ public class EnemySpawner : MonoBehaviour
             {
                 yield return null;
             }
-
-            subWaveNumber++;
         }
 
         waveNumber++;
@@ -87,5 +91,10 @@ public class EnemySpawner : MonoBehaviour
     private void StartNextWave()
     {
         StartCoroutine(NextWave());
+    }
+
+    public void EnemyDead()
+    {
+        aliveEnemies--;
     }
 }

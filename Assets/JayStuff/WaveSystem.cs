@@ -29,8 +29,7 @@ public class WaveSystem : MonoBehaviour
     public void NextWave()
     {
         if (activeRoom != null)
-        {
-            waveNumber++;
+        {  
             if (waveNumber > activeRoom.GetWaveCount())
             {
                 ActivateRoom(rooms[roomNumber]);
@@ -38,6 +37,7 @@ public class WaveSystem : MonoBehaviour
             else
             {
                 activeRoom.NextWave();
+                waveNumber++;
             }
         }
         else
@@ -58,5 +58,12 @@ public class WaveSystem : MonoBehaviour
         activeRoom.ActivateRoom();
         waveNumber = 1;
         roomNumber++;
+    }
+
+    [ContextMenu("Start Waves")]
+    public void StartFirstWave()
+    {
+        ActivateRoom(rooms[roomNumber]);
+        NextWave();
     }
 }

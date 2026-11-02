@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7223580258801922031}
   - component: {fileID: 6870809332668715022}
   - component: {fileID: 5149475113603257731}
+  - component: {fileID: 4637270041664058834}
   m_Layer: 8
   m_Name: Fake Enemy
   m_TagString: Enemy
@@ -114,3 +115,15 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4637270041664058834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8676291256592216827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d24c51638cdd5cd42b4872297f5f7e60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FakeEnemy
