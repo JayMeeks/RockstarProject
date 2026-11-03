@@ -141,6 +141,16 @@ public partial class @PlayerInputA: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""initialStateCheck"": false,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""WeaponSpecial"",
+                    ""type"": ""Button"",
+                    ""id"": ""f0974a7c-286d-4e97-8a1a-1a1146024fd8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -238,8 +248,19 @@ public partial class @PlayerInputA: IInputActionCollection2, IDisposable
                     ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";KBM"",
                     ""action"": ""CreateWeapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c3c00296-e4ec-451e-8d3d-bbde968ad205"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";KBM"",
+                    ""action"": ""WeaponSpecial"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -272,6 +293,7 @@ public partial class @PlayerInputA: IInputActionCollection2, IDisposable
         m_PlayerDefault_Mouse2 = m_PlayerDefault.FindAction("Mouse2", throwIfNotFound: true);
         m_PlayerDefault_Look = m_PlayerDefault.FindAction("Look", throwIfNotFound: true);
         m_PlayerDefault_CreateWeapon = m_PlayerDefault.FindAction("CreateWeapon", throwIfNotFound: true);
+        m_PlayerDefault_WeaponSpecial = m_PlayerDefault.FindAction("WeaponSpecial", throwIfNotFound: true);
     }
 
     ~@PlayerInputA()
@@ -357,6 +379,7 @@ public partial class @PlayerInputA: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerDefault_Mouse2;
     private readonly InputAction m_PlayerDefault_Look;
     private readonly InputAction m_PlayerDefault_CreateWeapon;
+    private readonly InputAction m_PlayerDefault_WeaponSpecial;
     /// <summary>
     /// Provides access to input actions defined in input action map "PlayerDefault".
     /// </summary>
@@ -388,6 +411,10 @@ public partial class @PlayerInputA: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "PlayerDefault/CreateWeapon".
         /// </summary>
         public InputAction @CreateWeapon => m_Wrapper.m_PlayerDefault_CreateWeapon;
+        /// <summary>
+        /// Provides access to the underlying input action "PlayerDefault/WeaponSpecial".
+        /// </summary>
+        public InputAction @WeaponSpecial => m_Wrapper.m_PlayerDefault_WeaponSpecial;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -429,6 +456,9 @@ public partial class @PlayerInputA: IInputActionCollection2, IDisposable
             @CreateWeapon.started += instance.OnCreateWeapon;
             @CreateWeapon.performed += instance.OnCreateWeapon;
             @CreateWeapon.canceled += instance.OnCreateWeapon;
+            @WeaponSpecial.started += instance.OnWeaponSpecial;
+            @WeaponSpecial.performed += instance.OnWeaponSpecial;
+            @WeaponSpecial.canceled += instance.OnWeaponSpecial;
         }
 
         /// <summary>
@@ -455,6 +485,9 @@ public partial class @PlayerInputA: IInputActionCollection2, IDisposable
             @CreateWeapon.started -= instance.OnCreateWeapon;
             @CreateWeapon.performed -= instance.OnCreateWeapon;
             @CreateWeapon.canceled -= instance.OnCreateWeapon;
+            @WeaponSpecial.started -= instance.OnWeaponSpecial;
+            @WeaponSpecial.performed -= instance.OnWeaponSpecial;
+            @WeaponSpecial.canceled -= instance.OnWeaponSpecial;
         }
 
         /// <summary>
@@ -543,5 +576,12 @@ public partial class @PlayerInputA: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnCreateWeapon(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "WeaponSpecial" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnWeaponSpecial(InputAction.CallbackContext context);
     }
 }

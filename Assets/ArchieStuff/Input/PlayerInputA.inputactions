@@ -55,6 +55,16 @@
                     "interactions": "",
                     "initialStateCheck": false,
                     "priority": 0
+                },
+                {
+                    "name": "WeaponSpecial",
+                    "type": "Button",
+                    "id": "f0974a7c-286d-4e97-8a1a-1a1146024fd8",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -152,8 +162,19 @@
                     "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";KBM",
                     "action": "CreateWeapon",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c3c00296-e4ec-451e-8d3d-bbde968ad205",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KBM",
+                    "action": "WeaponSpecial",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

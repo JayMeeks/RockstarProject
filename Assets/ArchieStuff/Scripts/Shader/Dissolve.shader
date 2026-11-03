@@ -68,7 +68,10 @@ Shader "Custom/Dissolve"
                 
                 float4 col = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, i.uv) * _BaseColor;
                 
-              
+              if (i.vertex.y < _threshold)
+              {
+                 return float4(0,0,0,0);
+              }
               
               if (alpha < _threshold)
               {
