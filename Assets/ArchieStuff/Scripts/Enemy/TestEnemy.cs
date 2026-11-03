@@ -1,5 +1,7 @@
 using System;
+using Enemies;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -24,11 +26,20 @@ public class TestEnemy : BaseEnemy, IDamageable
     private float timeSinceLastHit;
 
     public GameObject BloodOrb;
+
+    public LayerMask groundLayer;
+    private EnemyController enemyController;
+    private NavMeshAgent nma;
+    private bool leftFloor = false;
+    private Rigidbody rb;
     
     private void Awake()
     {
         maxHp = 100;
         currentHp = maxHp;
+        enemyController = GetComponent<EnemyController>();
+        nma = GetComponent<NavMeshAgent>();
+        rb = GetComponent<Rigidbody>();
     }
     
     
@@ -48,8 +59,32 @@ public class TestEnemy : BaseEnemy, IDamageable
        {
            currentHp++;
        }
-      
-        
+
+       if (nma.enabled == false)
+        {
+
+            bool grounded = GroundCheck();
+            if (grounded)
+            {
+                if (leftFloor)
+                {
+                    nma.enabled = true;
+                    enemyController.enabled = true;
+                    enemyController.paused = false;
+                    rb.isKinematic = true;
+                    leftFloor = false;
+                    rb.position = getClosestPointToNavMesh();
+                }
+
+            }
+            else
+            {
+                if (!leftFloor)
+                {
+                    leftFloor = true;
+                }
+            }
+        }
     }
 
 
@@ -87,5 +122,25 @@ public class TestEnemy : BaseEnemy, IDamageable
 
 
     }
-    
+
+    private bool GroundCheck()
+    {
+        return Physics.CheckSphere(transform.position, 1.2f, groundLayer);
+    }
+
+    private Vector3 getClosestPointToNavMesh()
+    {
+        Vector3 closestPoint = Vector3.zero;
+
+        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        {
+            closestPoint = hit.position;
+        }
+        else
+        {
+            Debug.Log("no navmesh found");
+        }
+
+        return closestPoint;
+    }
 }
