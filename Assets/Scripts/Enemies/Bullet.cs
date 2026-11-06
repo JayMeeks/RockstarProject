@@ -13,8 +13,8 @@ namespace Enemies
         private Vector3 _targetPosition;
 
     
-        [SerializeField] private float speed = 1f;
-        [SerializeField] private int damage;
+        private float _speed = 1f;
+        private int _damage = 10;
     
         [SerializeField] private GameObject player;
         
@@ -27,14 +27,27 @@ namespace Enemies
             player = GameObject.FindGameObjectWithTag("Player");
             _playerController = player.GetComponent<PlayerController>();
             _rb = GetComponent<Rigidbody>();
-            GetPlayerPosition();
-            StartCoroutine(SelfDestruct());
+            //GetPlayerPosition();
+            //StartCoroutine(SelfDestruct());
         }
 
+        public void SetStats(int damage, float speedOverride)
+        {
+            this._damage = damage;
+            if (speedOverride > 0f) 
+            {
+                _speed = speedOverride;
+            }
+            
+            GetPlayerPosition();
+            Destroy(gameObject, 15f);
+            
+        }
+        
         private void GetPlayerPosition()
         {
             _targetPosition = player.transform.position;
-            _rb.linearVelocity = (_targetPosition - _startPos).normalized * speed;
+            _rb.linearVelocity = (_targetPosition - _startPos).normalized * _speed;
         }
     
         // Update is called once per frame
@@ -46,14 +59,14 @@ namespace Enemies
         private void OnTriggerEnter(Collider other)
         {
             if (!other.CompareTag("Player")) return;
-            _playerController.currentHealth -= damage;
+            _playerController.currentHealth -= _damage;
             Destroy(gameObject);
         }
 
         private IEnumerator SelfDestruct()
         {
             yield return new WaitForSeconds(10f);
-            Destroy(gameObject);
+            Destroy(gameObject, 15f);
         }
     }
 }
