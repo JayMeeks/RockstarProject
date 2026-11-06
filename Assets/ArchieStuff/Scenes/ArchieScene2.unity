@@ -2983,6 +2983,9 @@ MonoBehaviour:
   slider: {fileID: 124406585}
   uiCanvas: {fileID: 849150764}
   BloodOrb: {fileID: 7349047597775747452, guid: d9fc1c1a7dcd8c04eaf804717ff72024, type: 3}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!54 &1495055456
 Rigidbody:
   m_ObjectHideFlags: 0

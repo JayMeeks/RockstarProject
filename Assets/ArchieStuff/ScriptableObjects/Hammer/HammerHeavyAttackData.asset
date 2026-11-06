@@ -18,4 +18,4 @@ MonoBehaviour:
   WaveGrowSpeedHeight: 1
   WaveLifespan: 0.75
   MaxStepHeight: 0.5
-  ForceMultiplier: 15
+  ForceMultiplier: 5

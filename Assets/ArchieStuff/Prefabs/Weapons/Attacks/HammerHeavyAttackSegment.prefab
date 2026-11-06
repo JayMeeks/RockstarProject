@@ -74,7 +74,7 @@ PrefabInstance:
       objectReference: {fileID: -462981019419857548, guid: 4d68fc4035da8114da2680ba84630db7, type: 3}
     - target: {fileID: 919132149155446097, guid: 89278af6d64b7ba4287988b4469b2381, type: 3}
       propertyPath: m_Name
-      value: HammerHeavyAttackQuarter
+      value: HammerHeavyAttackSegment
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 89278af6d64b7ba4287988b4469b2381, type: 3}
       propertyPath: m_Layer
@@ -130,4 +130,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e7c886dc8871ef4485ccf8237712e84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HammerHeavyAttackBehaviour
-  data: {fileID: 11400000, guid: ae388ba9bf8d95c4d91601caf5e4f318, type: 2}
+  standardData: {fileID: 11400000, guid: ae388ba9bf8d95c4d91601caf5e4f318, type: 2}
+  enhancedData: {fileID: 11400000, guid: b900249009470114ca7bf9ad5c800fb0, type: 2}

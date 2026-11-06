@@ -60,7 +60,7 @@ public class TestEnemy : BaseEnemy, IDamageable
            currentHp++;
        }
 
-       if (nma.enabled == false)
+     /*  if (nma.enabled == false)
         {
 
             bool grounded = GroundCheck();
@@ -84,7 +84,7 @@ public class TestEnemy : BaseEnemy, IDamageable
                     leftFloor = true;
                 }
             }
-        }
+        }*/
     }
 
 

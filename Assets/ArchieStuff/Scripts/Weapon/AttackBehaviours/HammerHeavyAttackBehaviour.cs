@@ -1,9 +1,14 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class HammerHeavyAttackBehaviour : MonoBehaviour
 {
-   public HammerHeavyAttackData data;
+   [SerializeField] public HammerHeavyAttackData standardData, enhancedData;
+   private HammerHeavyAttackData activeData;
+
+
+   private bool isEnhanced = false;
 
    private void OnEnable()
    {
@@ -14,20 +19,22 @@ public class HammerHeavyAttackBehaviour : MonoBehaviour
       }
    }
 
-   public void Attack()
+   public void Attack(bool enhanced)
    {
+      activeData = isEnhanced ? enhancedData : standardData;
       StartCoroutine(MoveWave());
+      
    }
 
    private IEnumerator MoveWave()
    {
       float t = 0.0f;
-      while (t < data.WaveLifespan)
+      while (t < activeData.WaveLifespan)
       {
          t += Time.deltaTime;
          CheckStep();
-         transform.position += transform.forward * (Time.deltaTime * data.WaveMoveSpeed);
-         transform.localScale += new Vector3( data.WaveGrowSpeedWidth * Time.deltaTime,  data.WaveGrowSpeedHeight * Time.deltaTime,  0);
+         transform.position += transform.forward * (Time.deltaTime * activeData.WaveMoveSpeed);
+         transform.localScale += new Vector3( activeData.WaveGrowSpeedWidth * Time.deltaTime,  activeData.WaveGrowSpeedHeight * Time.deltaTime,  0);
          yield return null;
       }
       Destroy(gameObject);
@@ -41,7 +48,7 @@ public class HammerHeavyAttackBehaviour : MonoBehaviour
       if (Physics.Raycast(transform.position, transform.forward, out checkHit,0.1f))
       {
         
-         Vector3 stepOrigin = new Vector3(transform.position.x, transform.position.y + data.MaxStepHeight, transform.position.z);
+         Vector3 stepOrigin = new Vector3(transform.position.x, transform.position.y + activeData.MaxStepHeight, transform.position.z);
          if (Physics.Raycast(stepOrigin, transform.forward, out checkHit, 0.1f))
          {
             Destroy(gameObject);
@@ -60,7 +67,7 @@ public class HammerHeavyAttackBehaviour : MonoBehaviour
    {
       Vector3 checkpos = transform.position;
     
-      Debug.Log("Finding new height");
+     // Debug.Log("Finding new height");
       while (Physics.Raycast(checkpos, transform.forward, out RaycastHit checkHit,0.1f))
       {
          checkpos = new Vector3(checkpos.x, checkpos.y + 0.01f, checkpos.z);
@@ -74,16 +81,17 @@ public class HammerHeavyAttackBehaviour : MonoBehaviour
 
    private void OnTriggerEnter(Collider other)
    {
+     
       if (other.gameObject.CompareTag("Enemy"))
       {
          var enemy = other.gameObject.GetComponent<BaseEnemy>();
-         enemy.TakeDamage(data.attackDamage);
+         enemy.TakeDamage(activeData.attackDamage);
      
                 
          Rigidbody rb = enemy.gameObject.GetComponent<Rigidbody>();
          if (rb == null){Debug.Log("Rigidbody missing from: " + enemy.gameObject.name);} 
               
-         rb.AddForce(Vector3.up * data.ForceMultiplier, ForceMode.Impulse);
+         rb.AddForce(Vector3.up * activeData.ForceMultiplier, ForceMode.Impulse);
       }
    }
 }
