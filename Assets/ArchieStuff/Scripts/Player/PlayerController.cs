@@ -113,7 +113,7 @@ public class PlayerController : MonoBehaviour
   
  }
 
-/*
+
  private void FixedUpdate()
  {
   HandleMovement();
@@ -123,7 +123,7 @@ public class PlayerController : MonoBehaviour
  {
   HandleLook();
  }
- */
+ 
 
 
  private void OpenCreateWeaponUI(InputAction.CallbackContext obj)
@@ -146,7 +146,7 @@ public class PlayerController : MonoBehaviour
   
   
  }
- /*
+ 
 
  private void HandleMovement()
  {
@@ -188,7 +188,7 @@ public class PlayerController : MonoBehaviour
    _moveDirection.Normalize();
   
  }
- */
+ 
 
  public bool TrySpendHealth(int tryHpValue, out int spentHpValue)
  {
@@ -220,6 +220,12 @@ public class PlayerController : MonoBehaviour
  public Vector3 GetPlayerForward()
  {
   return playerCamera.transform.forward;
+ }
+
+ public bool IsGrounded()
+ {
+  Vector3 origin = new Vector3(transform.position.x, transform.position.y - 1.0f, transform.position.z);
+  return Physics.Raycast(origin, Vector3.down, .25f);
  }
 
  public void SetCurrentHealth(int currentHealth)

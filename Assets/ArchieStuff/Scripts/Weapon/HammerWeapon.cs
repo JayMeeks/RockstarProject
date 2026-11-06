@@ -26,6 +26,8 @@ public class HammerWeapon : BaseWeapon
 
     [Header("Attacks")]
     public GameObject LightAttack,HeavyAttack;
+
+    private bool useEnhancedHeavy;
  
     
     
@@ -36,6 +38,8 @@ public class HammerWeapon : BaseWeapon
         
         _weaponMaterial.SetFloat("_saturationAlpha", 1.0f);
         currentDurability = weaponData.maxDurability;
+
+        useEnhancedHeavy = false;
         
         StartCoroutine(DissolveIn());
     }
@@ -48,6 +52,8 @@ public class HammerWeapon : BaseWeapon
         
         _playerDefaultActions.Mouse2.started += StartHeavyHammerCharge;
         _playerDefaultActions.Mouse2.canceled += EndHeavyHammerCharge;
+        
+        _playerDefaultActions.WeaponSpecial.started  += StartSpecial;
     }
 
     protected void OnDisable()
@@ -58,6 +64,8 @@ public class HammerWeapon : BaseWeapon
         
         _playerDefaultActions.Mouse2.started -= StartHeavyHammerCharge;
         _playerDefaultActions.Mouse2.canceled -= EndHeavyHammerCharge;
+        
+        _playerDefaultActions.WeaponSpecial.started  -= StartSpecial;
     }
 
     protected void Update()
@@ -93,6 +101,12 @@ public class HammerWeapon : BaseWeapon
     {
         _isChargingHammerHeavy = false;
         _chargeTimer = 0;
+         
+    }
+    
+    private void StartSpecial(InputAction.CallbackContext ctx)
+    {
+        OnUseWeaponSpecial();
     }
 
 
@@ -119,18 +133,28 @@ public class HammerWeapon : BaseWeapon
         Vector3 spawnPos = new Vector3(PlayerController.Instance.transform.position.x,
             PlayerController.Instance.transform.position.y , PlayerController.Instance.transform.position.z);
 
-       Quaternion startRot = Quaternion.LookRotation(PlayerController.Instance.GetPlayerForward(), Vector3.up);
+        Quaternion startRot;// = Quaternion.LookRotation(PlayerController.Instance.GetPlayerForward(), Vector3.up);
+
+       if (useEnhancedHeavy)
+       {
+           for (int i = 0; i < 12; i++)
+           {
+               startRot = Quaternion.Euler(0, transform.rotation.eulerAngles.y + i * (360f/12f), 0);
+               var attackObj = Instantiate(HeavyAttack,spawnPos,startRot);
+               attackObj.GetComponent<HammerHeavyAttackBehaviour>().Attack(useEnhancedHeavy);
+
+           }
+       }
+       else
+       {
+           startRot = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
+           var attackObj = Instantiate(HeavyAttack, spawnPos, startRot);
+           attackObj.GetComponent<HammerHeavyAttackBehaviour>().Attack(useEnhancedHeavy);
+       }
+       useEnhancedHeavy = false;
 
 
-        for (int i = 0; i < 12; i++)
-        {
-          
-            startRot = Quaternion.Euler(0, transform.rotation.eulerAngles.y + i * (360f/12f), 0);
-           
-            var attackObj = Instantiate(HeavyAttack,spawnPos,startRot);
-            attackObj.GetComponent<HammerHeavyAttackBehaviour>().Attack();
-
-        }
+    
        
         
         ReduceDurability();
@@ -144,13 +168,30 @@ public class HammerWeapon : BaseWeapon
 
     protected override void OnUseWeaponSpecial()
     {
-        throw new NotImplementedException();
+       PlayerController.Instance.gameObject.GetComponent<Rigidbody>().AddForce(Vector3.up, ForceMode.Impulse);
+       useEnhancedHeavy = true;
+       StartCoroutine(WaitUntilGrounded());
     }
     
     protected override void OnWeaponBreak()
     {
         PlayerController.Instance.EquippedWeapon = null;
         Destroy(gameObject);
+    }
+
+    private IEnumerator WaitUntilGrounded()
+    {
+        //Wait a small period so that player has time to leave ground
+        yield return new WaitForSeconds(0.1f);
+        //Wait for player to hit the ground
+        while (PlayerController.Instance.IsGrounded() == false)
+        {
+            yield return null;
+        }
+        //Small grace period between hitting the ground and disabling enhanced heavy
+        yield return new WaitForSeconds(0.35f);
+        //Disable enhanced heavy
+        if(useEnhancedHeavy){useEnhancedHeavy=false;}
     }
 
     private IEnumerator DissolveIn()
