@@ -18,8 +18,13 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable
     public abstract void TakeDamage(int damage);
 }
 
+//DEPRECATED, here in case old functionality can be copied over
+
+ /*
 public class TestEnemy : BaseEnemy, IDamageable
 {
+   
+  
     public Slider slider;
     public Canvas uiCanvas;
     
@@ -32,6 +37,8 @@ public class TestEnemy : BaseEnemy, IDamageable
     private NavMeshAgent nma;
     private bool leftFloor = false;
     private Rigidbody rb;
+    
+    
     
     private void Awake()
     {
@@ -60,7 +67,7 @@ public class TestEnemy : BaseEnemy, IDamageable
            currentHp++;
        }
 
-     /*  if (nma.enabled == false)
+       if (nma.enabled == false)
         {
 
             bool grounded = GroundCheck();
@@ -84,7 +91,7 @@ public class TestEnemy : BaseEnemy, IDamageable
                     leftFloor = true;
                 }
             }
-        }*/
+        }
     }
 
 
@@ -143,4 +150,4 @@ public class TestEnemy : BaseEnemy, IDamageable
 
         return closestPoint;
     }
-}
+}*/

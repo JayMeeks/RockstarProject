@@ -37,7 +37,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void Awake()
     {
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        player = PlayerMovement.Instance.transform;
         _agent = GetComponent<NavMeshAgent>();
         maxHp = 100;
         currentHp = maxHp;
@@ -86,15 +86,20 @@ public abstract class EnemyBase : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+   
+       
         currentHp -= damage;
-    }
 
-    public void HandleDeath()
-    {
+   
         if (currentHp <= 0)
         {
-            Destroy(this);
+            HandleDeath();
         }
+    }
+
+    private void HandleDeath()
+    {
+        Destroy(gameObject);
     }
 
     
