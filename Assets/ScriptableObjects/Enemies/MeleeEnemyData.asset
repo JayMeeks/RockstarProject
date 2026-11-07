@@ -17,6 +17,6 @@ MonoBehaviour:
   detectionRange: 5
   viewAngle: 60
   losePlayerTime: 3
-  damage: 1
-  attackRange: 2
-  attackCooldown: 3
+  damage: 5
+  attackRange: 1.8
+  attackCooldown: 2

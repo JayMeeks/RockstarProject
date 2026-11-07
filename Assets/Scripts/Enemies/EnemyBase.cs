@@ -142,7 +142,15 @@ public abstract class EnemyBase : MonoBehaviour
     
     private void FollowPlayer()
     {
+        var direction = (player.position - transform.position).normalized;
+        direction.y = 0f;
+
+        if (direction != Vector3.zero)
+        {
+            transform.rotation = Quaternion.LookRotation(direction);
+        }
         _agent.SetDestination(player.position);
+        
     }
     
     private void Patrol()
