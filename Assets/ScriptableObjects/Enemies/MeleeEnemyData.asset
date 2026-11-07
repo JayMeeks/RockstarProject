@@ -17,12 +17,6 @@ MonoBehaviour:
   detectionRange: 5
   viewAngle: 60
   losePlayerTime: 3
-  whatIsGround:
-    serializedVersion: 2
-    m_Bits: 0
-  whatIsPlayer:
-    serializedVersion: 2
-    m_Bits: 0
-  damage: 0
-  attackRange: 0
-  attackCooldown: 0
+  damage: 1
+  attackRange: 2
+  attackCooldown: 3

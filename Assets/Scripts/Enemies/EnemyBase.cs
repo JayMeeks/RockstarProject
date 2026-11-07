@@ -43,7 +43,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void Awake()
     {
-        player = PlayerMovement.Instance.transform;
+        
         _agent = GetComponent<NavMeshAgent>();
         maxHp = 100;
         currentHp = maxHp;
@@ -52,6 +52,7 @@ public abstract class EnemyBase : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        player = PlayerMovement.Instance.transform;
         FollowPlayer();
     }
 
@@ -135,7 +136,7 @@ public abstract class EnemyBase : MonoBehaviour
     { 
         yield return new WaitUntil(() => !paused);
         _agent.isStopped = false;
-        _state = EnemyState.Patrolling;
+        _state = EnemyState.Following;
         _hasAttacked = false;
     }
     

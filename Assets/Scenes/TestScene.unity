@@ -14013,6 +14013,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c85070c9efe7604a8486e038584136b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemies.RangedEnemy
+  slider: {fileID: 0}
+  uiCanvas: {fileID: 0}
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
