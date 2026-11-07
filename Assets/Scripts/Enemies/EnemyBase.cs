@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 
 public enum EnemyState
@@ -14,6 +15,10 @@ public abstract class EnemyBase : MonoBehaviour
 {
     protected int currentHp;
     protected int maxHp;
+
+    [Header("Health Bar")]
+    public Slider slider;
+    public Canvas uiCanvas;
 
     [Header("Layers")] 
     public LayerMask whatIsGround;
@@ -31,6 +36,7 @@ public abstract class EnemyBase : MonoBehaviour
     private bool _isWaiting;
     private EnemyState _state = EnemyState.Following;
     private float _timeSinceLostPlayer;
+    private EnemySpawner spawner;
     
     protected bool _hasAttacked;
     public bool paused = false;
@@ -53,7 +59,12 @@ public abstract class EnemyBase : MonoBehaviour
     void Update()
     {
         var distanceToPlayer = Vector3.Distance(player.position, transform.position);
-        
+
+        uiCanvas.transform.LookAt(transform.position - (player.position - transform.position));
+        uiCanvas.transform.rotation = Quaternion.LookRotation(transform.position - player.position);
+        slider.value = (float)currentHp / (float)maxHp;
+
+
         switch (_state)
         {
             case EnemyState.Patrolling:
@@ -99,6 +110,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     private void HandleDeath()
     {
+        spawner.EnemyDead();
         Destroy(gameObject);
     }
 
@@ -194,6 +206,11 @@ public abstract class EnemyBase : MonoBehaviour
         }
 
         return true;
+    }
+
+    public void SetSpawner(EnemySpawner enemySpawner)
+    {
+        spawner = enemySpawner;
     }
 
     private bool GroundCheck()

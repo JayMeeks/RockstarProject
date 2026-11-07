@@ -69,7 +69,7 @@ public class EnemySpawner : MonoBehaviour
 
                 GameObject newEnemy = Instantiate(enemy.enemyPrefab, transform.position, transform.rotation);
 
-                FakeEnemy enemyScript = newEnemy.GetComponent<FakeEnemy>();
+                EnemyBase enemyScript = newEnemy.GetComponent<EnemyBase>();
 
                 enemyScript.SetSpawner(this);
 
