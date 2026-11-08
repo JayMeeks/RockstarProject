@@ -8,6 +8,7 @@ public class RoomController : MonoBehaviour
     [Tooltip("The total number of waves in this room.")]
     [SerializeField] int waveCount;
     [SerializeField] private List<EnemySpawner> spawners;
+    [SerializeField] private GameObject entryDoor;
 
     public event Action OnRoomActivated;
     public event Action OnRoomDeactivated;
@@ -34,6 +35,7 @@ public class RoomController : MonoBehaviour
 
     public void ActivateRoom()
     {
+        entryDoor.SetActive(false);
         OnRoomActivated?.Invoke();
     }
 
@@ -64,11 +66,13 @@ public class RoomController : MonoBehaviour
 
     private void AllSpawnersFinished()
     {
+        Debug.Log("Wave finished");
         OnWavesFinished?.Invoke();
     }
 
     public void OnRoomEnter()
     {
+        entryDoor.SetActive(true);
         NextWave();
     }
 }

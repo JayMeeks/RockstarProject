@@ -45,7 +45,7 @@ public abstract class EnemyBase : MonoBehaviour
     {
         player = PlayerMovement.Instance.transform;
         _agent = GetComponent<NavMeshAgent>();
-        maxHp = 100;
+        maxHp = 40;
         currentHp = maxHp;
     }
     

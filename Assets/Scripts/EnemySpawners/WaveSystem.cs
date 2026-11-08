@@ -37,6 +37,7 @@ public class WaveSystem : MonoBehaviour
         {  
             if (waveNumber > activeRoom.GetWaveCount())
             {
+                Debug.Log("Room finished");
                 ActivateRoom(rooms[roomNumber]);
             }
             else if (roomNumber <= rooms.Count)
