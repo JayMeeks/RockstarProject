@@ -39,10 +39,14 @@ public class WaveSystem : MonoBehaviour
             {
                 ActivateRoom(rooms[roomNumber]);
             }
-            else
+            else if (roomNumber <= rooms.Count)
             {
                 activeRoom.NextWave();
                 waveNumber++;
+            }
+            else
+            {
+                Debug.Log("All Rooms Completed");
             }
         }
         else
