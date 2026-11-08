@@ -24,6 +24,8 @@ public class DaggerWeapon : BaseWeapon
     [Header("Attacks")]
     [SerializeField] private GameObject knifeLightAttackHitbox;
     [SerializeField] private BoxCollider knifeHeavyAttackHitbox;
+    
+    private LineRenderer _lineRenderer;
   
     
 
@@ -34,6 +36,9 @@ public class DaggerWeapon : BaseWeapon
         _playerDefaultActions = _playerInput.PlayerDefault;
         
         _weaponMaterial.SetFloat("_saturationAlpha", 1.0f);
+        
+        _lineRenderer = GetComponent<LineRenderer>();
+        _lineRenderer.enabled = false;
         
         
         
@@ -112,7 +117,7 @@ public class DaggerWeapon : BaseWeapon
         PlayerWeaponSystem.Instance.SetWeaponVisible(false);
         
         var attackObj = Instantiate(HeavyAttack, PlayerMovement.Instance.transform.position, transform.rotation); 
-        attackObj.GetComponent<DaggerHeavyAttackBehaviour>().Attack(PlayerMovement.Instance.GetPlayerForward());
+        attackObj.GetComponent<DaggerHeavyAttackBehaviour>().Attack(Camera.main.transform.forward);
 
         
         if(currentDurability == 0){OnWeaponBreak();}
@@ -120,17 +125,18 @@ public class DaggerWeapon : BaseWeapon
     
     protected override void OnUseWeaponSpecial()
     {
-        /*
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, weaponData.maxSpecialRange))
+        
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 25))
         {
-            Debug.Log("Raycast hit");
+            Debug.Log("Raycast hit" + hit.collider.gameObject.name);
             _lineRenderer.enabled = true;
-            _lineRenderer.SetPosition(0, PlayerController.Instance.transform.position);
+            _lineRenderer.SetPosition(0, PlayerMovement.Instance.transform.position);
             _lineRenderer.SetPosition(1, hit.point);
             
             Vector3 launchDir = (hit.point - transform.position).normalized;
-            PlayerController.Instance.GetComponent<Rigidbody>().AddForce(launchDir * weaponData.specialForceMult, ForceMode.Impulse);
-        }*/
+            PlayerMovement.Instance.ApplyImpulse(launchDir ,5);
+        }
+        _lineRenderer.enabled = false;
         
     }
 

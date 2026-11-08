@@ -47,7 +47,7 @@ public class HammerHeavyAttackBehaviour : MonoBehaviour
 
       if (Physics.Raycast(transform.position, transform.forward, out checkHit,0.1f))
       {
-        
+         if (checkHit.transform.gameObject.CompareTag("Enemy")) { return;}
          Vector3 stepOrigin = new Vector3(transform.position.x, transform.position.y + activeData.MaxStepHeight, transform.position.z);
          if (Physics.Raycast(stepOrigin, transform.forward, out checkHit, 0.1f))
          {

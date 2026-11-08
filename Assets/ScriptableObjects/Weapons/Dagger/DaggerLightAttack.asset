@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DaggerLightAttack
   attackDamage: 10
   AttackSize: {x: 1, y: 1, z: 2}
-  DebugView: 1
+  DebugView: 0
   debugPos: {x: 0, y: 0, z: 0}
   DebugCube: {fileID: 581326706171161653, guid: defb88fba60b72e4d8c0f2d7638c2c64, type: 3}
   DebugCubeLifespan: 2
