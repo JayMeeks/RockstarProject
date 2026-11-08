@@ -10,6 +10,11 @@ public class WaveSystem : MonoBehaviour
     private int roomNumber = 0;
     private RoomController activeRoom;
 
+    private void Start()
+    {
+        StartFirstWave();
+    }
+
     private void OnEnable()
     {
         foreach (RoomController room in rooms)

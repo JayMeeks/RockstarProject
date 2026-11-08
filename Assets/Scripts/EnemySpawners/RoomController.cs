@@ -66,4 +66,9 @@ public class RoomController : MonoBehaviour
     {
         OnWavesFinished?.Invoke();
     }
+
+    public void OnRoomEnter()
+    {
+        NextWave();
+    }
 }
