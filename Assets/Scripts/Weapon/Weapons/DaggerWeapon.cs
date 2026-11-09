@@ -103,42 +103,88 @@ public class DaggerWeapon : BaseWeapon
         if(currentDurability == 0){OnWeaponBreak();}
     }
 
+
     protected override void OnUseHeavyAttack()
     {
-        if (!weaponEnabled) { return;}
+        if (!weaponEnabled) { return; }
         //Move behaviour to player?
-        if (PlayerHealthSystem.Instance.TrySpendHealth(weaponData.heavyAttackHpCost, out var healthUsed) == false) { return; }
+        PlayerStamina stamina = PlayerStamina.Instance;
+
+        if (stamina == null || !stamina.CanSpend(stamina.heavyAttackCost))
+            return;
+
+        if (PlayerHealthSystem.Instance.TrySpendHealth(
+            weaponData.heavyAttackHpCost, out var healthUsed) == false)
+        {
+            return;
+        }
+
+        if (!stamina.TrySpend(stamina.heavyAttackCost))
+            return;
+
         PlayerHealthSystem.Instance.DamagePlayer(healthUsed);
-        
+
         ReduceDurability();
         UpdateMatProps();
 
         weaponEnabled = false;
         PlayerWeaponSystem.Instance.SetWeaponVisible(false);
-        
-        var attackObj = Instantiate(HeavyAttack, PlayerMovement.Instance.transform.position, transform.rotation); 
-        attackObj.GetComponent<DaggerHeavyAttackBehaviour>().Attack(Camera.main.transform.forward);
 
-        
-        if(currentDurability == 0){OnWeaponBreak();}
+        var attackObj = Instantiate(
+            HeavyAttack,
+            PlayerMovement.Instance.transform.position,
+            transform.rotation
+        );
+
+        attackObj.GetComponent<DaggerHeavyAttackBehaviour>()
+            .Attack(Camera.main.transform.forward);
+
+        if (currentDurability == 0)
+        {
+            OnWeaponBreak();
+        }
     }
-    
+
+
+
     protected override void OnUseWeaponSpecial()
     {
-        
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 25))
+        PlayerStamina stamina = PlayerStamina.Instance;
+
+        if (stamina == null || !stamina.CanSpend(stamina.knifeSpecialCost))
+            return;
+
+        if (Physics.Raycast(
+            Camera.main.transform.position,
+            Camera.main.transform.forward,
+            out RaycastHit hit,
+            25))
         {
+            if (!stamina.TrySpend(stamina.knifeSpecialCost))
+                return;
+
             Debug.Log("Raycast hit" + hit.collider.gameObject.name);
+
             _lineRenderer.enabled = true;
             _lineRenderer.SetPosition(0, PlayerMovement.Instance.transform.position);
             _lineRenderer.SetPosition(1, hit.point);
-            
+
             Vector3 launchDir = (hit.point - transform.position).normalized;
-            PlayerMovement.Instance.ApplyImpulse(launchDir ,5);
+            PlayerMovement.Instance.ApplyImpulse(launchDir, 5);
         }
-        _lineRenderer.enabled = false;
-        
+
+        //_lineRenderer.enabled = false; // this is disabling the line renderer immediately after the special is used, ive done a quick fix but feel free to change it 
+        StartCoroutine(HideGrappleLine()); //this
     }
+
+
+    private IEnumerator HideGrappleLine() // and this
+    {
+        yield return new WaitForSeconds(0.15f);
+        _lineRenderer.enabled = false;
+    }
+
+
 
     protected override void OnWeaponBreak()
     {

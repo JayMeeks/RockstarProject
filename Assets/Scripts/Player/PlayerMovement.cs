@@ -3,8 +3,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(PlayerStamina))]
 public class PlayerMovement : MonoBehaviour
 {
+    private static PlayerMovement _instance;
+    public static PlayerMovement Instance { get { return _instance; } }
+
     [Header("Movement")]
     private float currentSpeed;
     public float walkSpeed;
@@ -24,7 +28,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Dashing")]
     public float dashSpeed = 20f;
     public float dashDuration = 0.2f;
-    public float dashCooldown = 1f;
+    public float dashCooldown = 5f;
 
     public bool isDashing { get; private set; }
 
@@ -50,16 +54,10 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 movementDirection;
     private Rigidbody body;
     private PlayerControls controls;
+    private PlayerStamina stamina;
+    private bool canSprint;
 
     public MovementState state;
-    
-    
-    private static PlayerMovement _instance; 
-    public static PlayerMovement Instance {get{return _instance;}}
-
-    
-    
-    
 
     public enum MovementState
     {
@@ -79,27 +77,43 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(this.gameObject);
+            enabled = false;
+            Destroy(gameObject);
+            return;
         }
-        else
-        {
-            _instance = this;
-            DontDestroyOnLoad(this.gameObject);
 
-            controls = new PlayerControls();
-            body = GetComponent<Rigidbody>();
-        }
+        _instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        controls = new PlayerControls();
+        body = GetComponent<Rigidbody>();
+        stamina = GetComponent<PlayerStamina>();
     }
 
     private void OnEnable()
     {
-        controls.Player.Enable();
+        if (controls != null)
+            controls.Player.Enable();
     }
 
     private void OnDisable()
     {
-        controls.Player.Disable();
+        if (controls != null)
+            controls.Player.Disable();
+
         isDashing = false;
+
+        if (stamina != null)
+            stamina.ResetSprintDrain();
+    }
+
+    private void OnDestroy()
+    {
+        if (_instance == this)
+            _instance = null;
+
+        if (controls != null)
+            controls.Dispose();
     }
 
     private void Start()
@@ -111,11 +125,33 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        isGrounded = Physics.Raycast(transform.position, Vector3.down,
-            playerHeight * 0.5f + 0.2f, groundLayer);
+        isGrounded = Physics.Raycast(
+            transform.position,
+            Vector3.down,
+            playerHeight * 0.5f + 0.2f,
+            groundLayer
+        );
 
         ReadInput();
         ReadDashInput();
+
+        bool wantsSprint = isGrounded &&
+            !wallRiding &&
+            !isDashing &&
+            controls.Player.Sprint.IsPressed();
+
+        bool moving = moveX != 0f || moveZ != 0f;
+
+        if (wantsSprint && moving)
+        {
+            canSprint = stamina.TryDrainSprint(Time.deltaTime);
+        }
+        else
+        {
+            stamina.ResetSprintDrain();
+            canSprint = wantsSprint && stamina.CanSpend(stamina.sprintCost);
+        }
+
         HandleState();
         LimitSpeed();
 
@@ -137,7 +173,10 @@ public class PlayerMovement : MonoBehaviour
         moveX = moveInput.x;
         moveZ = moveInput.y;
 
-        if (controls.Player.Jump.IsPressed() && canJump && isGrounded)
+        if (controls.Player.Jump.IsPressed() &&
+            canJump &&
+            isGrounded &&
+            stamina.TrySpend(stamina.jumpCost))
         {
             canJump = false;
             Jump();
@@ -148,7 +187,8 @@ public class PlayerMovement : MonoBehaviour
     private void ReadDashInput()
     {
         if (controls.Player.Dash.WasPressedThisFrame() &&
-            !isDashing && Time.time >= nextDashTime)
+            !isDashing &&
+            Time.time >= nextDashTime)
         {
             StartDash();
         }
@@ -166,7 +206,7 @@ public class PlayerMovement : MonoBehaviour
             state = MovementState.WallRiding;
             targetSpeed = wallRideSpeed;
         }
-        else if (isGrounded && controls.Player.Sprint.IsPressed())
+        else if (isGrounded && canSprint)
         {
             state = MovementState.Sprinting;
             targetSpeed = runSpeed;
@@ -179,7 +219,9 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             state = MovementState.Air;
-            targetSpeed = previousTargetSpeed > walkSpeed ? runSpeed : walkSpeed;
+            targetSpeed = previousTargetSpeed > walkSpeed
+                ? runSpeed
+                : walkSpeed;
         }
 
         if (Mathf.Abs(targetSpeed - previousTargetSpeed) > 0.1f)
@@ -205,13 +247,21 @@ public class PlayerMovement : MonoBehaviour
 
         while (elapsed < difference)
         {
-            currentSpeed = Mathf.Lerp(startingSpeed, targetSpeed, elapsed / difference);
+            currentSpeed = Mathf.Lerp(
+                startingSpeed,
+                targetSpeed,
+                elapsed / difference
+            );
 
             float acceleration = accelerationMultiplier;
 
             if (IsOnSlope())
             {
-                float slopeAngle = Vector3.Angle(Vector3.up, slopeInfo.normal);
+                float slopeAngle = Vector3.Angle(
+                    Vector3.up,
+                    slopeInfo.normal
+                );
+
                 float slopeFactor = 1f + slopeAngle / 90f;
 
                 acceleration *= slopeAccelerationMultiplier * slopeFactor;
@@ -226,7 +276,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void StartDash()
     {
-        Vector3 direction = orientation.forward * moveZ + orientation.right * moveX;
+        Vector3 direction = orientation.forward * moveZ +
+                            orientation.right * moveX;
 
         if (direction.sqrMagnitude < 0.01f)
             direction = orientation.forward;
@@ -262,25 +313,40 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyMovement()
     {
-        movementDirection = orientation.forward * moveZ + orientation.right * moveX;
+        movementDirection = orientation.forward * moveZ +
+                            orientation.right * moveX;
 
         if (IsOnSlope() && !leavingSlope)
         {
-            body.AddForce(GetSlopeDirection(movementDirection) *
-                currentSpeed * 20f, ForceMode.Force);
+            body.AddForce(
+                GetSlopeDirection(movementDirection) *
+                currentSpeed * 20f,
+                ForceMode.Force
+            );
 
             if (body.linearVelocity.y > 0f)
-                body.AddForce(Vector3.down * 80f, ForceMode.Force);
+            {
+                body.AddForce(
+                    Vector3.down * 80f,
+                    ForceMode.Force
+                );
+            }
         }
         else if (isGrounded)
         {
-            body.AddForce(movementDirection.normalized *
-                currentSpeed * 10f, ForceMode.Force);
+            body.AddForce(
+                movementDirection.normalized *
+                currentSpeed * 10f,
+                ForceMode.Force
+            );
         }
         else
         {
-            body.AddForce(movementDirection.normalized *
-                currentSpeed * 10f * airControl, ForceMode.Force);
+            body.AddForce(
+                movementDirection.normalized *
+                currentSpeed * 10f * airControl,
+                ForceMode.Force
+            );
         }
 
         if (!wallRiding)
@@ -295,17 +361,23 @@ public class PlayerMovement : MonoBehaviour
         if (IsOnSlope() && !leavingSlope)
         {
             if (body.linearVelocity.magnitude > currentSpeed)
-                body.linearVelocity = body.linearVelocity.normalized * currentSpeed;
+            {
+                body.linearVelocity =
+                    body.linearVelocity.normalized * currentSpeed;
+            }
         }
         else
         {
             Vector3 horizontalVelocity = new Vector3(
-                body.linearVelocity.x, 0f, body.linearVelocity.z
+                body.linearVelocity.x,
+                0f,
+                body.linearVelocity.z
             );
 
             if (horizontalVelocity.magnitude > currentSpeed)
             {
-                Vector3 limitedVelocity = horizontalVelocity.normalized * currentSpeed;
+                Vector3 limitedVelocity =
+                    horizontalVelocity.normalized * currentSpeed;
 
                 body.linearVelocity = new Vector3(
                     limitedVelocity.x,
@@ -315,7 +387,8 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        if (maxVerticalSpeed != 0f && body.linearVelocity.y > maxVerticalSpeed)
+        if (maxVerticalSpeed != 0f &&
+            body.linearVelocity.y > maxVerticalSpeed)
         {
             body.linearVelocity = new Vector3(
                 body.linearVelocity.x,
@@ -330,10 +403,15 @@ public class PlayerMovement : MonoBehaviour
         leavingSlope = true;
 
         body.linearVelocity = new Vector3(
-            body.linearVelocity.x, 0f, body.linearVelocity.z
+            body.linearVelocity.x,
+            0f,
+            body.linearVelocity.z
         );
 
-        body.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        body.AddForce(
+            transform.up * jumpForce,
+            ForceMode.Impulse
+        );
     }
 
     private void ResetJump()
@@ -342,29 +420,12 @@ public class PlayerMovement : MonoBehaviour
         leavingSlope = false;
     }
 
-
     public void ApplyImpulse(Vector3 direction, float forceMultiplier)
     {
-        body.AddForce(direction * forceMultiplier, ForceMode.Impulse);
-    }
-    
-    
-
-    public bool IsOnSlope()
-    {
-        if (Physics.Raycast(transform.position, Vector3.down, out slopeInfo,
-            playerHeight * 0.5f + 0.3f, groundLayer))
-        {
-            float slopeAngle = Vector3.Angle(Vector3.up, slopeInfo.normal);
-            return slopeAngle > 0f && slopeAngle < maxSlopeAngle;
-        }
-
-        return false;
-    }
-
-    public Vector3 GetSlopeDirection(Vector3 direction)
-    {
-        return Vector3.ProjectOnPlane(direction, slopeInfo.normal).normalized;
+        body.AddForce(
+            direction * forceMultiplier,
+            ForceMode.Impulse
+        );
     }
 
     public bool IsGrounded()
@@ -375,5 +436,34 @@ public class PlayerMovement : MonoBehaviour
     public Vector3 GetPlayerForward()
     {
         return transform.forward;
+    }
+
+    public bool IsOnSlope()
+    {
+        if (Physics.Raycast(
+            transform.position,
+            Vector3.down,
+            out slopeInfo,
+            playerHeight * 0.5f + 0.3f,
+            groundLayer))
+        {
+            float slopeAngle = Vector3.Angle(
+                Vector3.up,
+                slopeInfo.normal
+            );
+
+            return slopeAngle > 0f &&
+                   slopeAngle < maxSlopeAngle;
+        }
+
+        return false;
+    }
+
+    public Vector3 GetSlopeDirection(Vector3 direction)
+    {
+        return Vector3.ProjectOnPlane(
+            direction,
+            slopeInfo.normal
+        ).normalized;
     }
 }

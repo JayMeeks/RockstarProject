@@ -10015,6 +10015,7 @@ GameObject:
   - component: {fileID: 977426203}
   - component: {fileID: 977426202}
   - component: {fileID: 977426204}
+  - component: {fileID: 977426205}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -10056,7 +10057,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 977426193}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 410d6faf1d5ea0b49bbaa4d7538a4b59, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -10253,6 +10254,33 @@ MonoBehaviour:
   playerUI: {fileID: 980963607}
   hpSlider: {fileID: 229832780}
   hpText: {fileID: 413182784}
+--- !u!114 &977426205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 977426193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 349b25260c3ff0442b42791f95f5add4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStamina
+  maxStamina: 100
+  currentStamina: 0
+  regenAmount: 1
+  regenInterval: 0.05
+  regenDelay: 0.75
+  emptyRegenDelay: 2
+  sprintCost: 1
+  sprintInterval: 0.125
+  wallRunCost: 1
+  wallRunInterval: 0.1
+  jumpCost: 2
+  wallJumpCost: 0
+  heavyAttackCost: 10
+  knifeSpecialCost: 10
+  hammerSpecialCost: 20
 --- !u!1 &980963607
 GameObject:
   m_ObjectHideFlags: 0

@@ -122,59 +122,88 @@ public class HammerWeapon : BaseWeapon
         if(currentDurability == 0){OnWeaponBreak();}
     }
 
+
     protected override void OnUseHeavyAttack() //Probably called from animation event?
     {
-        if (PlayerHealthSystem.Instance.TrySpendHealth(weaponData.heavyAttackHpCost, out var healthUsed) == false)
+        PlayerStamina stamina = PlayerStamina.Instance;
+
+        // Check whether the player has enough stamina for a heavy attack
+        if (stamina == null || !stamina.CanSpend(stamina.heavyAttackCost))
+            return;
+
+        // Check the health cost before spending stamina
+        if (!PlayerHealthSystem.Instance.TrySpendHealth(
+            weaponData.heavyAttackHpCost, out var healthUsed))
         {
             return;
         }
+
+        if (!stamina.TrySpend(stamina.heavyAttackCost))
+            return;
+
         PlayerHealthSystem.Instance.DamagePlayer(healthUsed);
 
         Vector3 spawnPos = new Vector3(
             PlayerMovement.Instance.transform.position.x,
-            PlayerMovement.Instance.transform.position.y , 
-            PlayerMovement.Instance.transform.position.z);
+            PlayerMovement.Instance.transform.position.y,
+            PlayerMovement.Instance.transform.position.z
+        );
 
         Quaternion startRot;// = Quaternion.LookRotation(PlayerController.Instance.GetPlayerForward(), Vector3.up);
 
-       if (useEnhancedHeavy)
-       {
-           for (int i = 0; i < 12; i++)
-           {
-               startRot = Quaternion.Euler(0, transform.rotation.eulerAngles.y + i * (360f/12f), 0);
-               var attackObj = Instantiate(HeavyAttack,spawnPos,startRot);
-               attackObj.GetComponent<HammerHeavyAttackBehaviour>().Attack(useEnhancedHeavy);
+        if (useEnhancedHeavy)
+        {
+            for (int i = 0; i < 12; i++)
+            {
+                startRot = Quaternion.Euler(
+                    0,
+                    transform.rotation.eulerAngles.y + i * (360f / 12f),
+                    0
+                );
 
-           }
-       }
-       else
-       {
-           startRot = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
-           var attackObj = Instantiate(HeavyAttack, spawnPos, startRot);
-           attackObj.GetComponent<HammerHeavyAttackBehaviour>().Attack(useEnhancedHeavy);
-       }
-       useEnhancedHeavy = false;
+                var attackObj = Instantiate(HeavyAttack, spawnPos, startRot);
+                attackObj.GetComponent<HammerHeavyAttackBehaviour>().Attack(useEnhancedHeavy);
+            }
+        }
+        else
+        {
+            startRot = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
 
+            var attackObj = Instantiate(HeavyAttack, spawnPos, startRot);
+            attackObj.GetComponent<HammerHeavyAttackBehaviour>().Attack(useEnhancedHeavy);
+        }
 
-    
-       
-        
+        useEnhancedHeavy = false;
+
         ReduceDurability();
         UpdateMatProps();
-       
-        
-  
-        if(currentDurability == 0){OnWeaponBreak();}
-        
+
+        if (currentDurability == 0)
+            OnWeaponBreak();
     }
+
+
 
     protected override void OnUseWeaponSpecial()
     {
-       PlayerMovement.Instance.ApplyImpulse(Vector3.up,1);
-       useEnhancedHeavy = true;
-       StartCoroutine(WaitUntilGrounded());
+        PlayerStamina stamina = PlayerStamina.Instance;
+
+        if (stamina == null)
+            return;
+
+        if (useEnhancedHeavy)
+            return;
+
+        // Spend 20 stamina to activate the hammer special
+        if (!stamina.TrySpend(stamina.hammerSpecialCost))
+            return;
+
+        PlayerMovement.Instance.ApplyImpulse(Vector3.up, 1);
+        useEnhancedHeavy = true;
+        StartCoroutine(WaitUntilGrounded());
     }
-    
+
+
     protected override void OnWeaponBreak()
     {
         PlayerWeaponSystem.Instance.EquippedWeapon = null;

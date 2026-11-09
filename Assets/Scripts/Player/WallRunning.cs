@@ -1,7 +1,7 @@
-
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(PlayerStamina))]
 public class WallRunning : MonoBehaviour
 {
     [Header("Wall Running")]
@@ -32,6 +32,7 @@ public class WallRunning : MonoBehaviour
     private PlayerMovement movement;
     private Rigidbody rb;
     private PlayerControls controls;
+    private PlayerStamina stamina;
 
     private RaycastHit leftHit;
     private RaycastHit rightHit;
@@ -50,6 +51,7 @@ public class WallRunning : MonoBehaviour
         controls = new PlayerControls();
         rb = GetComponent<Rigidbody>();
         movement = GetComponent<PlayerMovement>();
+        stamina = GetComponent<PlayerStamina>();
     }
 
     private void OnEnable()
@@ -60,6 +62,9 @@ public class WallRunning : MonoBehaviour
     private void OnDisable()
     {
         controls.Player.Disable();
+
+        if (stamina != null)
+            stamina.ResetWallRunDrain();
     }
 
     private void Update()
@@ -76,17 +81,31 @@ public class WallRunning : MonoBehaviour
 
     private void CheckWalls()
     {
-        wallLeft = Physics.Raycast(transform.position, -orientation.right,
-            out leftHit, wallCheckDistance, wallLayer);
+        wallLeft = Physics.Raycast(
+            transform.position,
+            -orientation.right,
+            out leftHit,
+            wallCheckDistance,
+            wallLayer
+        );
 
-        wallRight = Physics.Raycast(transform.position, orientation.right,
-            out rightHit, wallCheckDistance, wallLayer);
+        wallRight = Physics.Raycast(
+            transform.position,
+            orientation.right,
+            out rightHit,
+            wallCheckDistance,
+            wallLayer
+        );
     }
 
     private bool AboveGround()
     {
-        return !Physics.Raycast(transform.position, Vector3.down,
-            minimumHeight, groundLayer);
+        return !Physics.Raycast(
+            transform.position,
+            Vector3.down,
+            minimumHeight,
+            groundLayer
+        );
     }
 
     private void HandleState()
@@ -96,8 +115,13 @@ public class WallRunning : MonoBehaviour
         horizontalInput = moveInput.x;
         verticalInput = moveInput.y;
 
-        if ((wallLeft || wallRight) && verticalInput > 0 &&
-            AboveGround() && !exitingWall)
+        bool wantsWallRun = (wallLeft || wallRight) &&
+            verticalInput > 0 &&
+            AboveGround() &&
+            !exitingWall &&
+            !movement.isDashing;
+
+        if (wantsWallRun && stamina.TryDrainWallRun(Time.deltaTime))
         {
             if (!movement.wallRiding)
                 StartWallRun();
@@ -115,6 +139,8 @@ public class WallRunning : MonoBehaviour
         }
         else if (exitingWall)
         {
+            stamina.ResetWallRunDrain();
+
             if (movement.wallRiding)
                 StopWallRun();
 
@@ -125,6 +151,8 @@ public class WallRunning : MonoBehaviour
         }
         else
         {
+            stamina.ResetWallRunDrain();
+
             if (movement.wallRiding)
                 StopWallRun();
         }
@@ -136,7 +164,9 @@ public class WallRunning : MonoBehaviour
         wallRunTimer = maxWallRunTime;
 
         rb.linearVelocity = new Vector3(
-            rb.linearVelocity.x, 0f, rb.linearVelocity.z
+            rb.linearVelocity.x,
+            0f,
+            rb.linearVelocity.z
         );
 
         cameraController.ChangeFOV(90f);
@@ -151,6 +181,7 @@ public class WallRunning : MonoBehaviour
     private void StopWallRun()
     {
         movement.wallRiding = false;
+
         cameraController.ChangeFOV(80f);
         cameraController.Tilt(0f);
     }
@@ -169,47 +200,74 @@ public class WallRunning : MonoBehaviour
             wallForward = -wallForward;
         }
 
-        rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+        rb.AddForce(
+            wallForward * wallRunForce,
+            ForceMode.Force
+        );
 
         if (controls.Player.WallClimbUp.IsPressed())
         {
             rb.linearVelocity = new Vector3(
-                rb.linearVelocity.x, wallClimbSpeed, rb.linearVelocity.z
+                rb.linearVelocity.x,
+                wallClimbSpeed,
+                rb.linearVelocity.z
             );
         }
 
         if (controls.Player.WallClimbDown.IsPressed())
         {
             rb.linearVelocity = new Vector3(
-                rb.linearVelocity.x, -wallClimbSpeed, rb.linearVelocity.z
+                rb.linearVelocity.x,
+                -wallClimbSpeed,
+                rb.linearVelocity.z
             );
         }
 
         if (!(wallLeft && horizontalInput > 0) &&
             !(wallRight && horizontalInput < 0))
         {
-            rb.AddForce(-wallNormal * 100f, ForceMode.Force);
+            rb.AddForce(
+                -wallNormal * 100f,
+                ForceMode.Force
+            );
         }
 
         if (useGravity)
-            rb.AddForce(Vector3.up * gravityCounterForce, ForceMode.Force);
+        {
+            rb.AddForce(
+                Vector3.up * gravityCounterForce,
+                ForceMode.Force
+            );
+        }
     }
 
     private void WallJump()
     {
+        if (!stamina.TrySpend(stamina.wallJumpCost))
+            return;
+
         exitingWall = true;
         exitTimer = exitWallTime;
 
-        Vector3 wallNormal = wallRight ? rightHit.normal : leftHit.normal;
+        Vector3 wallNormal = wallRight
+            ? rightHit.normal
+            : leftHit.normal;
 
-        Vector3 jumpForce = Vector3.up * wallJumpUpForce +
-                            wallNormal * wallJumpSideForce;
+        Vector3 jumpForce =
+            Vector3.up * wallJumpUpForce +
+            wallNormal * wallJumpSideForce;
 
         rb.linearVelocity = new Vector3(
-            rb.linearVelocity.x, 0f, rb.linearVelocity.z
+            rb.linearVelocity.x,
+            0f,
+            rb.linearVelocity.z
         );
 
-        rb.AddForce(jumpForce, ForceMode.Impulse);
+        rb.AddForce(
+            jumpForce,
+            ForceMode.Impulse
+        );
+
         StopWallRun();
     }
 }
