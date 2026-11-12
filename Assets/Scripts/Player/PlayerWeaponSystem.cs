@@ -9,7 +9,11 @@ public class PlayerWeaponSystem : MonoBehaviour
     public GameObject weaponCreatorPrefab;
     public BaseWeapon EquippedWeapon;
     public Transform weaponHolder;
-    
+
+
+    [SerializeField] private BaseWeapon unarmedWeapon;
+
+    private bool hasWeapon;
      
     private static PlayerWeaponSystem _instance; 
     public static PlayerWeaponSystem Instance {get{return _instance;}}
@@ -37,6 +41,10 @@ public class PlayerWeaponSystem : MonoBehaviour
             
             weaponCreator = Instantiate(weaponCreatorPrefab);
             weaponCreator.SetActive(false);
+            
+            EquipUnarmedWeapon();
+            
+          
         }
     }
 
@@ -67,7 +75,7 @@ public class PlayerWeaponSystem : MonoBehaviour
     
     private void OpenCreateWeaponUI(InputAction.CallbackContext obj)
     {
-        if (EquippedWeapon != null) { return; }
+        if (hasWeapon) { return; }
         
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -89,6 +97,19 @@ public class PlayerWeaponSystem : MonoBehaviour
     {
         return weaponHolder;
     }
+
+    public void EquipUnarmedWeapon()
+    {
+        hasWeapon = false;
+        EquippedWeapon = Instantiate(unarmedWeapon, GetWeaponHolder(), false);
+    }
+
+    public void SetHasWeapon(bool hasWeapon)
+    {
+        this.hasWeapon = hasWeapon;
+    }
+    
+
 
     public void SetWeaponEnabled(bool enabled)
     {

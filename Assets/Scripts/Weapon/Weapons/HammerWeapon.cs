@@ -28,6 +28,7 @@ public class HammerWeapon : BaseWeapon
     public GameObject LightAttack,HeavyAttack;
 
     private bool useEnhancedHeavy;
+    private bool _isGrounded;
  
     
     
@@ -70,9 +71,12 @@ public class HammerWeapon : BaseWeapon
 
     protected void Update()
     {
+        //Updates animator variables
+        //I'm sure there's a better way of doing this, but this animator setup is temporary anyway
         _chargeTimer += _isChargingHammerLight || _isChargingHammerHeavy ? Time.deltaTime : 0; //Could be moved out of update loop? Not sure if there's a way to do "On mouse held", fine for now
         hammerAnimator.SetBool("IsChargingLight", _isChargingHammerLight);//^^^
         hammerAnimator.SetBool("IsChargingHeavy", _isChargingHammerHeavy);
+        hammerAnimator.SetBool("IsGrounded", PlayerMovement.Instance.IsGrounded());
 
     }
     
@@ -109,8 +113,9 @@ public class HammerWeapon : BaseWeapon
         OnUseWeaponSpecial();
     }
 
-
-    protected override void OnUseLightAttack() //Probably called from animation event?
+    
+    //Called from animation event
+    protected override void OnUseLightAttack() 
     {
         ReduceDurability();
         UpdateMatProps();
@@ -122,8 +127,8 @@ public class HammerWeapon : BaseWeapon
         if(currentDurability == 0){OnWeaponBreak();}
     }
 
-
-    protected override void OnUseHeavyAttack() //Probably called from animation event?
+    //Called from animation event
+    protected override void OnUseHeavyAttack() 
     {
         PlayerStamina stamina = PlayerStamina.Instance;
 
@@ -142,15 +147,22 @@ public class HammerWeapon : BaseWeapon
             return;
 
         PlayerHealthSystem.Instance.DamagePlayer(healthUsed);
-
+        
+        
+        
+        //Gets player position 
         Vector3 spawnPos = new Vector3(
             PlayerMovement.Instance.transform.position.x,
             PlayerMovement.Instance.transform.position.y,
             PlayerMovement.Instance.transform.position.z
         );
 
-        Quaternion startRot;// = Quaternion.LookRotation(PlayerController.Instance.GetPlayerForward(), Vector3.up);
-
+        Quaternion startRot;
+        
+        
+        
+        //If the player has enhanced attack available, spawns 12 waves around the player
+        //X and Z rotation is ignored
         if (useEnhancedHeavy)
         {
             for (int i = 0; i < 12; i++)
@@ -162,15 +174,16 @@ public class HammerWeapon : BaseWeapon
                 );
 
                 var attackObj = Instantiate(HeavyAttack, spawnPos, startRot);
-                attackObj.GetComponent<HammerHeavyAttackBehaviour>().Attack(useEnhancedHeavy);
+                attackObj.GetComponent<HammerHeavyAttackBehaviour>().StartAttack(useEnhancedHeavy);
             }
         }
+        //Otherwise, just spawns the one just ahead of the player
         else
         {
             startRot = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
 
             var attackObj = Instantiate(HeavyAttack, spawnPos, startRot);
-            attackObj.GetComponent<HammerHeavyAttackBehaviour>().Attack(useEnhancedHeavy);
+            attackObj.GetComponent<HammerHeavyAttackBehaviour>().StartAttack(useEnhancedHeavy);
         }
 
         useEnhancedHeavy = false;
@@ -183,7 +196,8 @@ public class HammerWeapon : BaseWeapon
     }
 
 
-
+    //Applies upwards force to player
+    //Enables the heavy attack for a short time (until grounded again)
     protected override void OnUseWeaponSpecial()
     {
         PlayerStamina stamina = PlayerStamina.Instance;
@@ -206,10 +220,21 @@ public class HammerWeapon : BaseWeapon
 
     protected override void OnWeaponBreak()
     {
-        PlayerWeaponSystem.Instance.EquippedWeapon = null;
+        PlayerWeaponSystem.Instance.EquipUnarmedWeapon();
         Destroy(gameObject);
     }
 
+
+    //Called by animation event when the hammer is ready to be swung in the heavy animation
+    //Adds a force to the player downwards 
+    private void StartSlam()
+    {
+        PlayerMovement.Instance.ApplyImpulse(Vector3.down, 1);
+    }
+
+
+    //Called after weapon special is used
+    //Disables the special attack after the player has returned to the ground
     private IEnumerator WaitUntilGrounded()
     {
         //Wait a small period so that player has time to leave ground
@@ -224,6 +249,11 @@ public class HammerWeapon : BaseWeapon
         //Disable enhanced heavy
         if(useEnhancedHeavy){useEnhancedHeavy=false;}
     }
+    
+    
+    /// <summary>
+    /// Plays a simple shader-driven dissolve in animation
+    /// </summary>
 
     private IEnumerator DissolveIn()
     {
@@ -236,11 +266,19 @@ public class HammerWeapon : BaseWeapon
         }
     }
     
+    
+    /// <summary>
+    /// Updates the shader material values for the discolouration
+    /// </summary>
     private void UpdateMatProps()
     { 
         _weaponMaterial.SetFloat("_saturationAlpha", (float)currentDurability/weaponData.maxDurability);
     }
 
+    /// <summary>
+    /// Reduces durability of equipped weapon
+    /// Has an integer overload if you want to reduce durability by more than one
+    /// </summary>
     private void ReduceDurability()
     {
         currentDurability--;

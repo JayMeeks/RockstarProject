@@ -106,6 +106,8 @@ public class WeaponCreator2 : MonoBehaviour
         
         PlayerHealthSystem.Instance.DamagePlayer(healthUsed);
         
+        PlayerWeaponSystem.Instance.SetHasWeapon(true);
+        
         
         
         //Again, kind of ugly. Can be improved later if needed

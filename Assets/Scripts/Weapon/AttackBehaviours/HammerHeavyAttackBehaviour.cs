@@ -13,17 +13,17 @@ public class HammerHeavyAttackBehaviour : MonoBehaviour
    private void OnEnable()
    {
       
+      //Moves wave to the ground if player is over a ledge
       if (Physics.Raycast(transform.position, new Vector3(0.0f, -1.0f, 0.0f), out RaycastHit hit))
       {
          transform.position = new Vector3(transform.position.x, hit.point.y, transform.position.z);
       }
    }
 
-   public void Attack(bool enhanced)
+   public void StartAttack(bool enhanced)
    {
       activeData = isEnhanced ? enhancedData : standardData;
       StartCoroutine(MoveWave());
-      
    }
 
    private IEnumerator MoveWave()

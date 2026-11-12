@@ -188,7 +188,8 @@ public class DaggerWeapon : BaseWeapon
 
     protected override void OnWeaponBreak()
     {
-        PlayerWeaponSystem.Instance.EquippedWeapon = null;
+      //  PlayerWeaponSystem.Instance.EquippedWeapon = null;
+        PlayerWeaponSystem.Instance.EquipUnarmedWeapon();
         Destroy(gameObject);
     }
     

@@ -28,12 +28,17 @@ public class PlayerHealthSystem : MonoBehaviour
             
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            SetCurrentHealth(GetMaxHealth());
+           // SetCurrentHealth(GetMaxHealth());
+           
         }
     }
-    
-    
-    
+
+    private void Start()
+    {
+        SetCurrentHealth(1);
+    }
+
+
     public bool TrySpendHealth(int tryHpValue, out int spentHpValue)
     {
         if (GetCurrentHealth() > tryHpValue)
