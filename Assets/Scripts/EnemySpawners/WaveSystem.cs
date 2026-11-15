@@ -5,6 +5,7 @@ using UnityEngine;
 public class WaveSystem : MonoBehaviour
 {
     [SerializeField] private List<RoomController> rooms;
+    [SerializeField] protected EnemyPrefabs enemyPrefabs;
 
     private int waveNumber = 1;
     private int roomNumber = 0;
@@ -72,6 +73,22 @@ public class WaveSystem : MonoBehaviour
         activeRoom.ActivateRoom();
         waveNumber = 1;
         roomNumber++;
+    }
+
+    public GameObject GetGameObjectForEnemyType(EnemyClass.EnemyType enemyType)
+    {
+        if (enemyType is EnemyClass.EnemyType.Melee)
+        {
+            return enemyPrefabs.meleePrefab;
+        }
+        else if (enemyType is EnemyClass.EnemyType.Ranged)
+        {
+            return enemyPrefabs.rangedPrefab;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     [ContextMenu("Start Waves")]

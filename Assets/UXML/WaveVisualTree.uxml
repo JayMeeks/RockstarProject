@@ -6,6 +6,6 @@
         <ui:Button text="&gt;" enable-rich-text="true" class="button" style="white-space: nowrap; transform-origin: center; align-self: flex-start; align-content: flex-start; justify-content: flex-start; align-items: stretch; right: 0; top: auto; position: absolute;"/>
     </ui:VisualElement>
     <ui:VisualElement style="flex-grow: 1; height: 100%;">
-        <uie:PropertyField binding-path="waves"/>
+        <ui:ScrollView style="height: 399px; width: 100%;"/>
     </ui:VisualElement>
 </ui:UXML>

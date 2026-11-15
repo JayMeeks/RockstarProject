@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ff156fd8edaa8545b2856178c6a83f3, type: 3}
+  m_Name: EnemyPrefabs
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyPrefabs
+  meleePrefab: {fileID: 6742417812177288964, guid: a55dab51249f833429206bdc93f43751, type: 3}
+  rangedPrefab: {fileID: 6742417812177288964, guid: 48e3e6ec32a690743bed15822aa5254f, type: 3}

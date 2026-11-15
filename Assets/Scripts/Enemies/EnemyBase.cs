@@ -36,7 +36,7 @@ public abstract class EnemyBase : MonoBehaviour
     private bool _isWaiting;
     private EnemyState _state = EnemyState.Following;
     private float _timeSinceLostPlayer;
-    //private EnemySpawner spawner;
+    private RoomController spawner;
     
     protected bool _hasAttacked;
     public bool paused = false;
@@ -111,7 +111,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     private void HandleDeath()
     {
-        //spawner.EnemyDead();
+        spawner.EnemyDead();
         Destroy(gameObject);
     }
 
@@ -216,12 +216,12 @@ public abstract class EnemyBase : MonoBehaviour
 
         return true;
     }
-/*
-    public void SetSpawner(EnemySpawner enemySpawner)
+
+    public void SetSpawner(RoomController enemySpawner)
     {
         spawner = enemySpawner;
     }
-*/
+
 
     private bool GroundCheck()
     {

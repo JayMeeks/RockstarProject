@@ -5053,7 +5053,6 @@ GameObject:
   m_Component:
   - component: {fileID: 369579422}
   - component: {fileID: 369579423}
-  - component: {fileID: 369579424}
   m_Layer: 0
   m_Name: Room Controller
   m_TagString: Untagged
@@ -5073,7 +5072,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 872808711}
+  - {fileID: 383747008}
   m_Father: {fileID: 1688295318}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &369579423
@@ -5090,22 +5091,56 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomController
   waveCount: 0
   entryDoor: {fileID: 0}
---- !u!114 &369579424
+  waves:
+  - subwaves:
+    - enemies:
+      - spawnLocation: {fileID: 0}
+        enemyType: 0
+--- !u!1 &383747007
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 383747008}
+  - component: {fileID: 383747009}
+  m_Layer: 0
+  m_Name: Spawn Location
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &383747008
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 383747007}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 369579422}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &383747009
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 369579421}
+  m_GameObject: {fileID: 383747007}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1255eac24925b9c499aec80b24ade10b, type: 3}
+  m_Script: {fileID: 11500000, guid: 70a7d35137d5e2d419669c27b67224f1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RoomWaveController
-  waves:
-  - subwaves:
-    - enemies: []
-  - subwaves: []
+  m_EditorClassIdentifier: Assembly-CSharp::LocationMarker
+  locationName: Spawn Location
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -9085,6 +9120,51 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!1 &872808710
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 872808711}
+  - component: {fileID: 872808712}
+  m_Layer: 0
+  m_Name: Spawn Location
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &872808711
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 872808710}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -12.54, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 369579422}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &872808712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 872808710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70a7d35137d5e2d419669c27b67224f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocationMarker
+  locationName: Spawn Location
 --- !u!1 &886388706
 GameObject:
   m_ObjectHideFlags: 0
@@ -12173,6 +12253,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomController
   waveCount: 0
   entryDoor: {fileID: 0}
+  waves: []
 --- !u!1 &1685609372
 GameObject:
   m_ObjectHideFlags: 0
@@ -12333,6 +12414,7 @@ MonoBehaviour:
   - {fileID: 369579423}
   - {fileID: 1663282518}
   - {fileID: 1790346795}
+  enemyPrefabs: {fileID: 11400000, guid: f2727e69b8d4179468fb2210adaa5047, type: 2}
 --- !u!4 &1688295318
 Transform:
   m_ObjectHideFlags: 0
@@ -12842,6 +12924,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomController
   waveCount: 0
   entryDoor: {fileID: 0}
+  waves: []
 --- !u!4 &1790346796
 Transform:
   m_ObjectHideFlags: 0
