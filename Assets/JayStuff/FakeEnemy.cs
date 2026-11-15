@@ -1,3 +1,4 @@
+/*
 using UnityEngine;
 
 public class FakeEnemy : MonoBehaviour
@@ -26,4 +27,6 @@ public class FakeEnemy : MonoBehaviour
     {
         spawner = enemySpawner;
     }
+
 }
+*/

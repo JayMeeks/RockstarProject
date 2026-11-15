@@ -10,6 +10,11 @@ public class WaveSystem : MonoBehaviour
     private int roomNumber = 0;
     private RoomController activeRoom;
 
+    private void OnValidate()
+    {
+        rooms = new List<RoomController>(GetComponentsInChildren<RoomController>());
+    }
+
     private void Start()
     {
         StartFirstWave();
@@ -19,7 +24,7 @@ public class WaveSystem : MonoBehaviour
     {
         foreach (RoomController room in rooms)
         {
-            room.OnWavesFinished += NextWave;
+            room.OnWavesFinished += StartWaves;
         }
     }
 
@@ -27,11 +32,11 @@ public class WaveSystem : MonoBehaviour
     {
         foreach (RoomController room in rooms)
         {
-            room.OnWavesFinished -= NextWave;
+            room.OnWavesFinished -= StartWaves;
         }
     }
 
-    public void NextWave()
+    public void StartWaves()
     {
         if (activeRoom != null)
         {  
@@ -53,8 +58,7 @@ public class WaveSystem : MonoBehaviour
         else
         {
             ActivateRoom(rooms[roomNumber]);
-        }
-        
+        }    
     }
 
     public void ActivateRoom(RoomController room)
@@ -74,6 +78,6 @@ public class WaveSystem : MonoBehaviour
     public void StartFirstWave()
     {
         ActivateRoom(rooms[roomNumber]);
-        NextWave();
+        StartWaves();
     }
 }

@@ -1,3 +1,4 @@
+/*
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
@@ -98,3 +99,4 @@ public class EnemySpawner : MonoBehaviour
         aliveEnemies--;
     }
 }
+*/
