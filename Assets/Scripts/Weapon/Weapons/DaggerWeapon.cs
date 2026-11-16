@@ -170,7 +170,7 @@ public class DaggerWeapon : BaseWeapon
             _lineRenderer.SetPosition(1, hit.point);
 
             Vector3 launchDir = (hit.point - transform.position).normalized;
-            PlayerMovement.Instance.ApplyImpulse(launchDir, 5);
+            PlayerMovement.Instance.ApplyImpulse(launchDir, 17);
         }
 
         //_lineRenderer.enabled = false; // this is disabling the line renderer immediately after the special is used, ive done a quick fix but feel free to change it 

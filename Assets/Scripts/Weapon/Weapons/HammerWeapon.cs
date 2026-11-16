@@ -198,7 +198,7 @@ public class HammerWeapon : BaseWeapon
         if (!stamina.TrySpend(stamina.hammerSpecialCost))
             return;
 
-        PlayerMovement.Instance.ApplyImpulse(Vector3.up, 1);
+        PlayerMovement.Instance.ApplyImpulse(Vector3.up, 5);
         useEnhancedHeavy = true;
         StartCoroutine(WaitUntilGrounded());
     }

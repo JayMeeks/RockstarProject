@@ -2882,15 +2882,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   wallRunForce: 10
-  wallJumpUpForce: 0.5
-  wallJumpSideForce: 0.5
+  wallJumpUpForce: 0.75
+  wallJumpSideForce: 1.25
   wallClimbSpeed: 1.5
-  maxWallRunTime: 1.5
+  maxWallRunTime: 2.5
   wallCheckDistance: 1
   minimumHeight: 1.5
   exitWallTime: 0.5
-  useGravity: 1
-  gravityCounterForce: 1
+  useGravity: 0
+  gravityCounterForce: 5
   orientation: {fileID: 409603468}
   cameraController: {fileID: 155500950}
 --- !u!114 &1682353483
@@ -2905,17 +2905,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3e3a9844588e874f94b22a764770366, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  walkSpeed: 3
-  runSpeed: 5
+  walkSpeed: 5
+  runSpeed: 7.5
   wallRideSpeed: 7
   maxVerticalSpeed: 15
   accelerationMultiplier: 3
   slopeAccelerationMultiplier: 1
   groundDrag: 10
-  jumpForce: 1
+  jumpForce: 5
   jumpCooldown: 0.25
   airControl: 0.5
-  dashSpeed: 20
+  dashSpeed: 30
   dashDuration: 0.2
   dashCooldown: 1
   playerHeight: 2
@@ -2934,7 +2934,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1682353478}
   serializedVersion: 5
-  m_Mass: 0.1
+  m_Mass: 0.5
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -3071,7 +3071,7 @@ MonoBehaviour:
   emptyRegenDelay: 2
   sprintCost: 1
   sprintInterval: 0.125
-  wallRunCost: 1
+  wallRunCost: 0.5
   wallRunInterval: 0.1
   jumpCost: 2
   wallJumpCost: 0
