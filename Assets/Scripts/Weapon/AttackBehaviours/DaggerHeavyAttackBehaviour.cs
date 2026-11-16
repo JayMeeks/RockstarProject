@@ -7,7 +7,7 @@ public class DaggerHeavyAttackBehaviour : MonoBehaviour
 
 
     
-    private bool enemyHit = false;
+    private bool colliderHit = false;
     
     [Header("Line renderer")]
     [SerializeField]private LineRenderer _lineRenderer;
@@ -28,10 +28,11 @@ public class DaggerHeavyAttackBehaviour : MonoBehaviour
 
    private IEnumerator ThrowDagger(Vector3 throwDir)
    {
-
        _lineRenderer.enabled = true;
        
-       while (Vector3.Distance(transform.position, PlayerMovement.Instance.transform.position) <= data.maxHeavyRange && enemyHit == false)
+       //Moves dagger projectile towards facing direction
+       //Returns dagger when it hits something or reaches max range
+       while (Vector3.Distance(transform.position, PlayerMovement.Instance.transform.position) <= data.maxHeavyRange && colliderHit == false)
        {
            _lineRenderer.SetPosition(0, PlayerMovement.Instance.transform.position);
            _lineRenderer.SetPosition(1, transform.position);
@@ -50,11 +51,12 @@ public class DaggerHeavyAttackBehaviour : MonoBehaviour
 
    private void OnTriggerEnter(Collider other)
    {
+       if(other.CompareTag("Player")){return;}
        if (other.gameObject.CompareTag("Enemy"))
        {
            var enemy = other.gameObject.GetComponent<EnemyBase>();
            enemy.TakeDamage(data.attackDamage);
-           enemyHit = true;
        }
+        colliderHit = true;
    }
 }

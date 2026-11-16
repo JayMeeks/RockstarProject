@@ -15,9 +15,13 @@ public class HammerLightAttackBehaviour : MonoBehaviour
     public void Attack(Vector3 originPosition, Quaternion originRotation, Vector3 playerForward , out bool shouldHeal, float maxHealRange)
     {
         bool _shouldHeal = false;
+        
+        //Applies an offset in the direction the player is facing so that the attack originates from the player, and does not extend behind them
         float forwardOffset = data.AttackSize.z * 0.5f;
         originPosition += playerForward * forwardOffset;
         
+        //Checks for colliders within the attack range of the hammer
+        //Applied damage to all enemies within
         Collider[] hits = Physics.OverlapBox(originPosition, data.AttackSize,originRotation);
         for (int i = 0; i < hits.Length; i++)
         {

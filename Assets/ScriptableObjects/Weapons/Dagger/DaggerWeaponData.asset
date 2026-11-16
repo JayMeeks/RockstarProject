@@ -14,9 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DaggerWeaponData
   maxDurability: 10
   playerHpGainOnHit: 4
+  playerHpGainMaxRange: 0
   heavyAttackHpCost: 5
   specialAttackHpCost: 5
-  throwSpeedMult: 25
-  maxHeavyRange: 15
-  maxSpecialRange: 20
-  specialForceMult: 3
+  specialForceMultiplier: 5

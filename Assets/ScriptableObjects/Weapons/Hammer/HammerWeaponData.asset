@@ -17,3 +17,5 @@ MonoBehaviour:
   playerHpGainMaxRange: 5
   heavyAttackHpCost: 5
   specialAttackHpCost: 0
+  specialForceMultiplier: 1
+  slamForceMultiplier: 1

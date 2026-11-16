@@ -20,7 +20,8 @@ public class PlayerUI : MonoBehaviour
         PlayerHealthSystem.OnHealthChanged -= UpdateHPSlider;
     }
 
-
+    //Update health slider with current values
+    //Called whenever health changes
     private void UpdateHPSlider(int currentHp, int maxHp)
     {
          hpText.text = currentHp.ToString();

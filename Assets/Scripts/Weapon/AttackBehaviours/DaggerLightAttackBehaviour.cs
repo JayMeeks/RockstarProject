@@ -20,6 +20,8 @@ public class DaggerLightAttackBehaviour : MonoBehaviour
         float forwardOffset = data.AttackSize.z * 0.5f;
         originPosition += playerForward * forwardOffset;
         
+        //Checks for colliders within the attack range of the dagger
+        //Applied damage to all enemies within
         Collider[] hits = Physics.OverlapBox(originPosition, data.AttackSize,originRotation);
         for (int i = 0; i < hits.Length; i++)
         {

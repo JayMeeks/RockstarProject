@@ -117,9 +117,12 @@ public class HammerWeapon : BaseWeapon
     //Called from animation event
     protected override void OnUseLightAttack() 
     {
+        //Reduces durability and weapon saturation
         ReduceDurability();
         UpdateMatProps();
-
+        
+        //Creates the light attack at the player position
+        //Returns bool for if the player is close enough to heal
         var attackObj = Instantiate(LightAttack);
         attackObj.GetComponent<HammerLightAttackBehaviour>().Attack(PlayerMovement.Instance.transform.position,Camera.main.transform.rotation,Camera.main.transform.forward,out bool shouldHeal, weaponData.playerHpGainMaxRange);
         if (shouldHeal) { PlayerHealthSystem.Instance.HealPlayer(weaponData.playerHpGainOnHit);}
@@ -212,7 +215,13 @@ public class HammerWeapon : BaseWeapon
         if (!stamina.TrySpend(stamina.hammerSpecialCost))
             return;
 
-        PlayerMovement.Instance.ApplyImpulse(Vector3.up, 1);
+        Vector3 movementDir = PlayerMovement.Instance.GetPlayerRigidBody().linearVelocity.normalized;
+        
+        Vector3 launchDir = new Vector3(movementDir.x, 1, movementDir.z);
+        
+       // Debug.Log(movementDir);
+        
+        PlayerMovement.Instance.ApplyImpulse(launchDir, weaponData.specialForceMultiplier);
         useEnhancedHeavy = true;
         StartCoroutine(WaitUntilGrounded());
     }
@@ -229,7 +238,7 @@ public class HammerWeapon : BaseWeapon
     //Adds a force to the player downwards 
     private void StartSlam()
     {
-        PlayerMovement.Instance.ApplyImpulse(Vector3.down, 1);
+        PlayerMovement.Instance.ApplyImpulse(Vector3.down, weaponData.slamForceMultiplier);
     }
 
 
