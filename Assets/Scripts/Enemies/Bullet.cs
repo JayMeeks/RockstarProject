@@ -20,13 +20,14 @@ namespace Enemies
         
         private PlayerController _playerController;
         private Rigidbody _rb;
+        private Transform _playerTransform;
         
         void Awake()
         {
             _startPos = transform.position;
-            player = GameObject.FindGameObjectWithTag("Player");
-            _playerController = player.GetComponent<PlayerController>();
+            _playerTransform = PlayerMovement.Instance.transform;
             _rb = GetComponent<Rigidbody>();
+            //player = GameObject.FindGameObjectWithTag("Player");
             //GetPlayerPosition();
             //StartCoroutine(SelfDestruct());
         }
@@ -46,7 +47,7 @@ namespace Enemies
         
         private void GetPlayerPosition()
         {
-            _targetPosition = player.transform.position;
+            _targetPosition = _playerTransform.position;
             _rb.linearVelocity = (_targetPosition - _startPos).normalized * _speed;
         }
     

@@ -28,23 +28,23 @@ public abstract class EnemyBase : MonoBehaviour
     
     [Header("References")] 
     [SerializeField] private Transform[] patrolPoints;
-    [SerializeField] private Transform player;
+    [SerializeField] private Transform playerTransform;
     
-    private const float PatrolPointRange = 10f;
+    private const float _patrolPointRange = 10f;
     private NavMeshAgent _agent;
     private int _currentPatrolIndex;
     private bool _isWaiting;
     private EnemyState _state = EnemyState.Following;
     private float _timeSinceLostPlayer;
-    private EnemySpawner spawner;
+    private EnemySpawner _spawner;
     
-    protected bool _hasAttacked;
+    protected bool hasAttacked;
     public bool paused = false;
 
     protected virtual void Awake()
     {
-        player = PlayerMovement.Instance.transform;
         _agent = GetComponent<NavMeshAgent>();
+        //Health system will be changed later
         maxHp = 40;
         currentHp = maxHp;
     }
@@ -52,25 +52,26 @@ public abstract class EnemyBase : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        playerTransform = PlayerMovement.Instance.transform;
         FollowPlayer();
     }
 
     // Update is called once per frame
     void Update()
     {
-        var distanceToPlayer = Vector3.Distance(player.position, transform.position);
+        var _distanceToPlayer = Vector3.Distance(playerTransform.position, transform.position);
 
-        uiCanvas.transform.LookAt(transform.position - (player.position - transform.position));
-        uiCanvas.transform.rotation = Quaternion.LookRotation(transform.position - player.position);
+        uiCanvas.transform.LookAt(transform.position - (playerTransform.position - transform.position));
+        uiCanvas.transform.rotation = Quaternion.LookRotation(transform.position - playerTransform.position);
         slider.value = (float)currentHp / (float)maxHp;
 
 
+        //State Controller - will be changed at later date into a separate state machine script (potentially own scripts for each state)
         switch (_state)
         {
             case EnemyState.Patrolling:
                 Patrol();
-                if (distanceToPlayer <= enemyData.detectionRange && CanSeePlayer())
+                if (_distanceToPlayer <= enemyData.detectionRange && CanSeePlayer())
                 {
                     _state = EnemyState.Following;
                 }
@@ -78,7 +79,7 @@ public abstract class EnemyBase : MonoBehaviour
 
             case EnemyState.Following:
                 FollowPlayer();
-                if (CanAttack(distanceToPlayer))
+                if (CanAttack(_distanceToPlayer))
                 {
                     _state = EnemyState.Attacking;
                 }
@@ -86,7 +87,7 @@ public abstract class EnemyBase : MonoBehaviour
 
             case EnemyState.Attacking:
                 PerformAttack();
-                if (!_hasAttacked && !CanAttack(distanceToPlayer))
+                if (!hasAttacked && !CanAttack(_distanceToPlayer))
                 {
                     _state = EnemyState.Following;
                     _agent.isStopped = false;
@@ -111,45 +112,47 @@ public abstract class EnemyBase : MonoBehaviour
 
     private void HandleDeath()
     {
-        spawner.EnemyDead();
+        _spawner.EnemyDead();
         Destroy(gameObject);
     }
 
-    
+    //For use with each child class to check whether the player is in range of the enemy
     protected abstract bool CanAttack(float distance);
     
+    //Child class overrides for respective attacks, base function ensures that the enemy is facing the player before attacking
     protected virtual void PerformAttack()
     {
         _agent.isStopped = true;
-        var direction = (player.position - transform.position).normalized;
-        direction.y = 0f;
+        var _direction = (playerTransform.position - transform.position).normalized;
+        _direction.y = 0f;
 
-        if (direction != Vector3.zero)
+        if (_direction != Vector3.zero)
         {
-            transform.rotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.LookRotation(_direction);
         }
         
         
     }
     
+    //Attack cooldown - child can override with their respective time for cooldown
     protected virtual IEnumerator ResetAttack()
     { 
         yield return new WaitUntil(() => !paused);
         _agent.isStopped = false;
         _state = EnemyState.Following;
-        _hasAttacked = false;
+        hasAttacked = false;
     }
     
     private void FollowPlayer()
     {
-        var direction = (player.position - transform.position).normalized;
-        direction.y = 0f;
+        var _direction = (playerTransform.position - transform.position).normalized;
+        _direction.y = 0f;
 
-        if (direction != Vector3.zero)
+        if (_direction != Vector3.zero)
         {
-            transform.rotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.LookRotation(_direction);
         }
-        _agent.SetDestination(player.position);
+        _agent.SetDestination(playerTransform.position);
         
     }
     
@@ -181,15 +184,15 @@ public abstract class EnemyBase : MonoBehaviour
     {
         if (patrolPoints.Length == 0) return;
 
-        float randomZ = Random.Range(-PatrolPointRange, PatrolPointRange);
-        float randomX = Random.Range(-PatrolPointRange, PatrolPointRange);
+        float _randomZ = Random.Range(-_patrolPointRange, _patrolPointRange);
+        float _randomX = Random.Range(-_patrolPointRange, _patrolPointRange);
             
-        var randomPatrolPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
+        var _randomPatrolPoint = new Vector3(transform.position.x + _randomX, transform.position.y, transform.position.z + _randomZ);
 
-        if (Physics.Raycast(randomPatrolPoint, -transform.up, 2f, whatIsGround))
+        if (Physics.Raycast(_randomPatrolPoint, -transform.up, 2f, whatIsGround))
         {
         }
-        _agent.SetDestination(randomPatrolPoint);
+        _agent.SetDestination(_randomPatrolPoint);
             
     }
     
@@ -200,18 +203,19 @@ public abstract class EnemyBase : MonoBehaviour
 
     private bool IsFacingPlayer()
     {
-        var dirToPlayer = (player.position - transform.position).normalized;
-        var angle = Vector3.Angle(transform.forward, dirToPlayer);
-        return angle <= enemyData.viewAngle / 2f;
+        var _dirToPlayer = (playerTransform.position - transform.position).normalized;
+        var _angle = Vector3.Angle(transform.forward, _dirToPlayer);
+        return _angle <= enemyData.viewAngle / 2f;
     }
 
+    //Checks no obstacles are in the way between the enemy and player (Ranged enemy uses this to prevent projectiles being fired at walls) 
     private bool HasClearPathToPlayer()
     {
-        var dirToPlayer = player.position - transform.position;
+        var _dirToPlayer = playerTransform.position - transform.position;
 
-        if (Physics.Raycast(transform.position, dirToPlayer.normalized, out RaycastHit hit, dirToPlayer.magnitude))
+        if (Physics.Raycast(transform.position, _dirToPlayer.normalized, out RaycastHit _hit, _dirToPlayer.magnitude))
         {
-            return hit.transform == player;
+            return _hit.transform == playerTransform;
         }
 
         return true;
@@ -219,7 +223,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     public void SetSpawner(EnemySpawner enemySpawner)
     {
-        spawner = enemySpawner;
+        _spawner = enemySpawner;
     }
 
     private bool GroundCheck()
