@@ -2912,12 +2912,23 @@ MonoBehaviour:
   accelerationMultiplier: 3
   slopeAccelerationMultiplier: 1
   groundDrag: 10
+  sprintToggled: 0
+  groundBraking: 45
   jumpForce: 5
   jumpCooldown: 0.25
   airControl: 0.5
   dashSpeed: 30
   dashDuration: 0.2
   dashCooldown: 1
+  slideMomentumRetention: 0.98
+  runSlideBoost: 1
+  minSlideStartSpeed: 4
+  slideStopSpeed: 2
+  slideDeceleration: 1.5
+  slideSteering: 100
+  cameraHolder: {fileID: 660984162}
+  slideCameraDrop: 0.45
+  slideCameraSpeed: 12
   playerHeight: 2
   groundLayer:
     serializedVersion: 2
