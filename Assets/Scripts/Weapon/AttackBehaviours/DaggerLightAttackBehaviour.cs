@@ -27,7 +27,7 @@ public class DaggerLightAttackBehaviour : MonoBehaviour
         {
             if (hits[i].gameObject.CompareTag("Enemy"))
             {
-                var enemy = hits[i].gameObject.GetComponent<EnemyBase>();
+                var enemy = hits[i].gameObject.GetComponent<EnemyInfo>();
                 enemy.TakeDamage(data.attackDamage);
                 if (Vector3.Distance(originPosition, hits[i].gameObject.transform.position) < maxHealRange)
                 {

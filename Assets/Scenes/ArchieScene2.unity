@@ -3223,7 +3223,7 @@ GameObject:
   - component: {fileID: 1975322325}
   - component: {fileID: 1975322324}
   - component: {fileID: 1975322323}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -3509,7 +3509,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!135 &2040826464
 SphereCollider:
   m_ObjectHideFlags: 0

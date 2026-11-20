@@ -1,3 +1,4 @@
+using ArchieStuff.EnemyArchie;
 using UnityEngine;
 
 public class HammerLightAttackBehaviour : MonoBehaviour
@@ -27,17 +28,17 @@ public class HammerLightAttackBehaviour : MonoBehaviour
         {
             if (hits[i].gameObject.CompareTag("Enemy"))
             {
-                var enemy = hits[i].gameObject.GetComponent<EnemyBase>();
-                enemy.TakeDamage(data.attackDamage);
+                var enemyInfo = hits[i].gameObject.GetComponent<EnemyInfo>();
+                enemyInfo.TakeDamage(data.attackDamage);
                 if (Vector3.Distance(originPosition, hits[i].gameObject.transform.position) < maxHealRange)
                 {
                     _shouldHeal = true;
                 }
                 
-                Rigidbody rb = hits[i].gameObject.GetComponent<Rigidbody>();
-                if (rb == null){Debug.Log("Rigidbody missing from: " + hits[i].gameObject.name);} 
+                var enemyController = hits[i].gameObject.GetComponent<IStunnable>();
+                enemyController.OnStunned(10.0f);
+                
               
-                rb.AddForce(Vector3.up * data.ForceMultiplier, ForceMode.Impulse);
             }
         }
         

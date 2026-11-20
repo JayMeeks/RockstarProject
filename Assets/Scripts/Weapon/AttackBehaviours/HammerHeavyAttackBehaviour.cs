@@ -1,4 +1,6 @@
 using System.Collections;
+using ArchieStuff.EnemyArchie;
+using Enemies;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -100,14 +102,12 @@ public class HammerHeavyAttackBehaviour : MonoBehaviour
      
       if (other.gameObject.CompareTag("Enemy"))
       {
-         var enemy = other.gameObject.GetComponent<EnemyBase>();
-         enemy.TakeDamage(activeData.attackDamage);
-     
-                
-         Rigidbody rb = enemy.gameObject.GetComponent<Rigidbody>();
-         if (rb == null){Debug.Log("Rigidbody missing from: " + enemy.gameObject.name);} 
-              
-         rb.AddForce(Vector3.up * activeData.ForceMultiplier, ForceMode.Impulse);
+         var enemyData = other.gameObject.GetComponent<EnemyInfo>();
+         enemyData.TakeDamage(activeData.attackDamage);
+
+         var enemyController = other.gameObject.GetComponent<IKnockbackable>();
+         enemyController.OnReceiveKnockback((transform.forward + Vector3.up).normalized,activeData.ForceMultiplier);
+
       }
    }
 }

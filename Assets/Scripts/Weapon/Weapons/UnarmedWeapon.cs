@@ -71,7 +71,7 @@ public class UnarmedWeapon : BaseWeapon
            maxDistance:  data.SiphonStartRange) 
            && siphonActive == false && PlayerHealthSystem.Instance.GetCurrentHealth() < 25.0f)
         {
-            var enemy = hit.transform.gameObject.GetComponent<EnemyBase>();
+            var enemy = hit.transform.gameObject.GetComponent<EnemyInfo>();
             if (enemy != null)
             {
                 StartCoroutine(StartSiphon(enemy));
@@ -90,7 +90,7 @@ public class UnarmedWeapon : BaseWeapon
 
 
 
-    private IEnumerator StartSiphon(EnemyBase enemy)
+    private IEnumerator StartSiphon(EnemyInfo enemy)
     {
         //Enable line renderer and set bool for siphon active
         siphonTetherLine.enabled = true;

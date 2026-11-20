@@ -54,7 +54,7 @@ public class DaggerHeavyAttackBehaviour : MonoBehaviour
        if(other.CompareTag("Player")){return;}
        if (other.gameObject.CompareTag("Enemy"))
        {
-           var enemy = other.gameObject.GetComponent<EnemyBase>();
+           var enemy = other.gameObject.GetComponent<EnemyInfo>();
            enemy.TakeDamage(data.attackDamage);
        }
         colliderHit = true;
