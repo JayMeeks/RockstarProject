@@ -4,24 +4,26 @@ using UnityEngine.AI;
 
 public class HollowStateChargeShot : State
 {
-    private float chargeTime;
+    private float chargeTimer;
+    private HollowStats stats;
     
 
-    public HollowStateChargeShot(EnemyStateController controller, NavMeshAgent agent) : base(controller, agent)
+    public HollowStateChargeShot(EnemyStateController controller, NavMeshAgent agent, HollowStats stats) : base(controller, agent)
     {
+        this.stats = stats;
     }
 
     public override void Enter()
     {
-        chargeTime = 0.5f;
+        chargeTimer = stats.shotChargeTime;
     }
 
     public override void Tick()
     {
-        chargeTime -= Time.deltaTime;
-        if (chargeTime <= 0.0f)
+        chargeTimer -= Time.deltaTime;
+        if (chargeTimer <= 0.0f)
         {
-            controller.ChangeState(new HollowStateShoot(controller, agent ));
+            controller.ChangeState(new HollowStateShoot(controller, agent,stats ));
         }
     }
 

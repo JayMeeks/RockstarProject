@@ -4,11 +4,14 @@ using UnityEngine.AI;
 
 public class RipperStateStunned : State
 {
+    private RipperStats stats;
     private float _stunTimer, _stunDuration;
   
-    public RipperStateStunned(EnemyStateController controller, NavMeshAgent agent, float stunDuration) : base(controller, agent)
+  
+    public RipperStateStunned(EnemyStateController controller, NavMeshAgent agent, float stunDuration, RipperStats stats) : base(controller, agent)
     {
         _stunDuration = stunDuration;
+        this.stats = stats;
     }
 
     public override void Enter()
@@ -20,7 +23,7 @@ public class RipperStateStunned : State
     {
         if (_stunTimer <= 0)
         {
-            controller.ChangeState(new RipperStateDecision(controller, agent));
+            controller.ChangeState(new RipperStateDecision(controller, agent,stats));
         }
         else
         {

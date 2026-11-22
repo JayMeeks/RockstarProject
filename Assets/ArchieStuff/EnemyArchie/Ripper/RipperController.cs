@@ -8,7 +8,8 @@ public class RipperController : EnemyStateController, IStunnable, IKnockbackable
     private NavMeshAgent _agent;
     private IState _currentState;
     private Rigidbody _rigidbody;
-  
+    
+    [SerializeField] private RipperStats stats;
     public void Start()
     {
         _agent = GetComponent<NavMeshAgent>();
@@ -18,7 +19,9 @@ public class RipperController : EnemyStateController, IStunnable, IKnockbackable
         _rigidbody.useGravity = false;
         _rigidbody.isKinematic = true;
         
-        ChangeState(new RipperStateDecision(this,_agent));
+        _agent.speed = stats.moveSpeed;
+        
+        ChangeState(new RipperStateDecision(this,_agent,stats));
     }
 
     public void Update()
@@ -35,7 +38,7 @@ public class RipperController : EnemyStateController, IStunnable, IKnockbackable
 
     public void OnStunned(float stunTime)
     {
-        ChangeState(new RipperStateStunned(this,_agent, stunTime));
+        ChangeState(new RipperStateStunned(this,_agent, (stunTime * stats.stunTimeMultiplier),stats));
     }
 
     public void OnReceiveKnockback(Vector3 forceDirection, float forceMultiplier)
@@ -45,7 +48,7 @@ public class RipperController : EnemyStateController, IStunnable, IKnockbackable
            _agent.enabled = false;
            _rigidbody.useGravity = true;
            _rigidbody.isKinematic = false;
-           _rigidbody.AddForce(forceDirection * forceMultiplier, ForceMode.Impulse);
+           _rigidbody.AddForce(forceDirection * (forceMultiplier * stats.knockbackMultiplier), ForceMode.Impulse);
            StartCoroutine(WaitUntilGrounded());
 
         }

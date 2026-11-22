@@ -4,14 +4,16 @@ using UnityEngine.AI;
 
 public class RipperStateChase : State
 {
-    public RipperStateChase(EnemyStateController controller, NavMeshAgent agent) : base(controller, agent)
+    private RipperStats stats;
+  
+    public RipperStateChase(EnemyStateController controller, NavMeshAgent agent, RipperStats stats) : base(controller, agent)
     {
-    
+        this.stats = stats;
     }
 
     public override void Enter()
     {
-        
+      
     }
 
     public override void Tick()
@@ -21,9 +23,9 @@ public class RipperStateChase : State
         //Otherwise, move towards player
         Vector3 playerPos = PlayerMovement.Instance.transform.position;
         float distanceToPlayer = Vector3.Distance(agent.transform.position, playerPos);
-        if (distanceToPlayer < 1.5f) //Attack range for ripper TODO: Add scriptable object data
+        if (distanceToPlayer < stats.attackStartRange) //Attack range for ripper 
         {
-            controller.ChangeState(new RipperStateAttack(controller, agent));
+            controller.ChangeState(new RipperStateAttack(controller, agent,stats));
         }
         else
         {
@@ -31,7 +33,6 @@ public class RipperStateChase : State
             {
                 agent.SetDestination(playerPos);
             }
-            
         }
     }
 

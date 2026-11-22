@@ -14,6 +14,9 @@ public class BaseWeaponData : ScriptableObject
     [Tooltip("Maximum range at which the player can regain hp from a hit")]
     [SerializeField] public int playerHpGainMaxRange;
     
+    [Tooltip("Cost in health to initiate light attack")]
+    [SerializeField] public int lightAttackHpCost;
+    
     [Tooltip("Cost in health to initiate heavy attack")]
     [SerializeField] public int heavyAttackHpCost;
     

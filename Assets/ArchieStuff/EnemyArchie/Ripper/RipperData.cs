@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class RipperData : EnemyInfo
 {
+    [SerializeField] private RipperStats _stats;
+   
     private void Start()
     {
         Initialize();
@@ -11,7 +13,7 @@ public class RipperData : EnemyInfo
 
     protected override void Initialize()
     {
-        MaxHealth = 100;
+        MaxHealth = _stats.maxHealth;
         CurrentHealth = MaxHealth;
     }
 

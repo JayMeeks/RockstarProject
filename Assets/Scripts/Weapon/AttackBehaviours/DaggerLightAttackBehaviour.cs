@@ -12,11 +12,10 @@ public class DaggerLightAttackBehaviour : MonoBehaviour
     /// <param name="originPosition">Start position of the attack overlap box</param>
     /// <param name="originRotation">Rotation of the attack overlap box</param>
     /// <param name="playerForward">Forward of the player camera</param>
-    /// <param name="shouldHeal">Whether the player should heal off of the hit</param>
     /// <param name="maxHealRange">Range at which the player should regain health after hit</param>
-    public void Attack(Vector3 originPosition, Quaternion originRotation, Vector3 playerForward , out bool shouldHeal, float maxHealRange)
+    /// <param name="healAmount">Amount player should heal if within range</param>
+    public void Attack(Vector3 originPosition, Quaternion originRotation, Vector3 playerForward , float maxHealRange, int healAmount)
     {
-        bool _shouldHeal = false;
         float forwardOffset = data.AttackSize.z * 0.5f;
         originPosition += playerForward * forwardOffset;
         
@@ -31,12 +30,12 @@ public class DaggerLightAttackBehaviour : MonoBehaviour
                 enemy.TakeDamage(data.attackDamage);
                 if (Vector3.Distance(originPosition, hits[i].gameObject.transform.position) < maxHealRange)
                 {
-                    _shouldHeal = true;
+                    PlayerHealthSystem.Instance.HealPlayer(healAmount);
                 }
             }
         }
         
-        shouldHeal = _shouldHeal;
+
         
         if (data.DebugView) { SpawnTestCube(originPosition, originRotation,data.DebugCubeLifespan); }
 

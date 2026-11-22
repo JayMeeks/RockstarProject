@@ -82,6 +82,12 @@ public class HammerWeapon : BaseWeapon
     
     private void StartLightHammerCharge(InputAction.CallbackContext ctx)
     {
+        if (PlayerHealthSystem.Instance.TrySpendHealth(
+                weaponData.lightAttackHpCost, out var healthUsed) == false)
+        {
+            return;
+        }
+      
         _isChargingHammerLight = true;
     }
     
@@ -117,6 +123,14 @@ public class HammerWeapon : BaseWeapon
     //Called from animation event
     protected override void OnUseLightAttack() 
     {
+    
+        if (PlayerHealthSystem.Instance.TrySpendHealth(
+                weaponData.lightAttackHpCost, out var healthUsed) == false)
+        {
+            return;
+        }
+        PlayerHealthSystem.Instance.DamagePlayer(healthUsed);
+    
         //Reduces durability and weapon saturation
         ReduceDurability();
         UpdateMatProps();
@@ -124,8 +138,7 @@ public class HammerWeapon : BaseWeapon
         //Creates the light attack at the player position
         //Returns bool for if the player is close enough to heal
         var attackObj = Instantiate(LightAttack);
-        attackObj.GetComponent<HammerLightAttackBehaviour>().Attack(PlayerMovement.Instance.transform.position,Camera.main.transform.rotation,Camera.main.transform.forward,out bool shouldHeal, weaponData.playerHpGainMaxRange);
-        if (shouldHeal) { PlayerHealthSystem.Instance.HealPlayer(weaponData.playerHpGainOnHit);}
+        attackObj.GetComponent<HammerLightAttackBehaviour>().Attack(PlayerMovement.Instance.transform.position,Camera.main.transform.rotation,Camera.main.transform.forward, weaponData.playerHpGainMaxRange,weaponData.playerHpGainOnHit);
         
         if(currentDurability == 0){OnWeaponBreak();}
     }

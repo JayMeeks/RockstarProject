@@ -4,12 +4,13 @@ using UnityEngine.AI;
 
 public class HollowStateFlee : State
 {
-    private float fleeDistance;
     private Vector3 targetPosition;
+    private HollowStats stats;
     
-    public HollowStateFlee(EnemyStateController controller, NavMeshAgent agent, Vector3 targetPosition) : base(controller, agent)
+    public HollowStateFlee(EnemyStateController controller, NavMeshAgent agent, Vector3 targetPosition, HollowStats stats) : base(controller, agent)
     {
       this.targetPosition = targetPosition;
+      this.stats = stats;
     }
 
     public override void Enter()
@@ -22,7 +23,7 @@ public class HollowStateFlee : State
     
         if (agent.enabled && agent.remainingDistance <= agent.stoppingDistance)
         {
-            controller.ChangeState(new HollowStateChargeShot(controller, agent));
+            controller.ChangeState(new HollowStateChargeShot(controller, agent,stats));
         }
     }
 

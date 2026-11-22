@@ -8,6 +8,8 @@ public class HollowController : EnemyStateController , IStunnable, IKnockbackabl
     private NavMeshAgent _agent;
     private IState _currentState;
     private Rigidbody _rigidbody;
+    
+    [SerializeField] private HollowStats stats;
 
    
   
@@ -20,7 +22,9 @@ public class HollowController : EnemyStateController , IStunnable, IKnockbackabl
         _rigidbody.useGravity = false;
         _rigidbody.isKinematic = true;
         
-        ChangeState(new HollowStateDecision(this,_agent));
+        _agent.speed = stats.moveSpeed;
+        
+        ChangeState(new HollowStateDecision(this,_agent,stats));
     }
 
     public void Update()
@@ -41,7 +45,7 @@ public class HollowController : EnemyStateController , IStunnable, IKnockbackabl
     
     public void OnStunned(float stunTime)
     {
-        ChangeState(new HollowStateStunned(this,_agent, stunTime));
+        ChangeState(new HollowStateStunned(this,_agent, (stunTime * stats.stunTimeMultiplier),stats));
     }
 
     public void OnReceiveKnockback(Vector3 forceDirection, float forceMultiplier)
@@ -51,7 +55,7 @@ public class HollowController : EnemyStateController , IStunnable, IKnockbackabl
             _agent.enabled = false;
             _rigidbody.useGravity = true;
             _rigidbody.isKinematic = false;
-            _rigidbody.AddForce(forceDirection * forceMultiplier, ForceMode.Impulse);
+            _rigidbody.AddForce(forceDirection * (forceMultiplier * stats.knockbackMultiplier), ForceMode.Impulse);
             StartCoroutine(WaitUntilGrounded());
 
         }

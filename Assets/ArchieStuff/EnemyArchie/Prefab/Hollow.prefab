@@ -157,6 +157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d562f630421b42249b0499912a4206cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HollowController
+  stats: {fileID: 11400000, guid: f14f0b1f4c9bb814ead13ac99816f0eb, type: 2}
 --- !u!114 &7646896792682211512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,6 +170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95ab979545bc5a34f88781c9e147abb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HollowData
+  _stats: {fileID: 11400000, guid: f14f0b1f4c9bb814ead13ac99816f0eb, type: 2}
 --- !u!195 &220491587636065638
 NavMeshAgent:
   m_ObjectHideFlags: 0

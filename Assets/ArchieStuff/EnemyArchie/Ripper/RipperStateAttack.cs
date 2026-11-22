@@ -4,21 +4,26 @@ using UnityEngine.AI;
 
 public class RipperStateAttack : State
 {
-    private float attackWindup;
-    private float attackCooldown;
-    private bool hasAttacked;
- 
- 
-    public RipperStateAttack(EnemyStateController controller, NavMeshAgent agent) : base(controller, agent)
-    {
+
+    private RipperStats stats;
+   
+    private float attackWindupTimer;
+    private float attackCooldownTimer;
+    private float attackIntervalTimer;
     
+    private int attacksPerformed = 0;
+ 
+    public RipperStateAttack(EnemyStateController controller, NavMeshAgent agent, RipperStats stats) : base(controller, agent)
+    {
+        this.stats = stats;
     }
 
     public override void Enter()
     {
         //Sets cooldown timers
-        attackCooldown = 1.0f; //TODO: Scriptable object stats
-        attackWindup = 0.5f; //TODO: Scriptable object stats
+        attackCooldownTimer = stats.attackCooldown;
+        attackWindupTimer = stats.attackWindup;
+        attackIntervalTimer = stats.attackInterval;
         //Also will probably be replaced by animation timings?
 
 
@@ -31,29 +36,34 @@ public class RipperStateAttack : State
 
     public override void Tick()
     { 
-     //Could be improved when animations are implemented
-     
-      //If enemy hasn't attacked yet, decrease windup timer until attack
-      if (!hasAttacked)
-      { 
-          if (attackWindup <= 0.0f)
-          {
-              PerformMeleeAttack(); 
-              hasAttacked = true;
-          }
-          attackWindup -= Time.deltaTime;
-      }
-      
-      //After attack, decrease cooldown timer to create a gap after attack -> chase
-      if (hasAttacked)
-      {
-          if (attackCooldown <= 0.0f && hasAttacked)
-          {
-              controller.ChangeState(new RipperStateDecision(controller, agent));
-          }
-          attackCooldown -= Time.deltaTime;
-      }
+        //Wait for initial attack windup
+        if(attackWindupTimer > 0.0f){ attackWindupTimer -= Time.deltaTime; return; }
+        
+        
+        //Perform all attacks 
+        if (attackIntervalTimer <= 0.0f && attacksPerformed < stats.attacksToPerform)
+        {
+            PerformMeleeAttack();
+            attacksPerformed++;
+            attackIntervalTimer = stats.attackInterval;
+        }
+        else if(attackIntervalTimer > 0.0f && attacksPerformed < stats.attacksToPerform)
+        {
+            attackIntervalTimer -= Time.deltaTime;
+        }
+        
+        //Wait for cooldown after finishing attack string
+        if (attacksPerformed == stats.attacksToPerform && attackCooldownTimer <= 0.0f)
+        {
+            controller.ChangeState(new RipperStateDecision(controller, agent,stats));
+        }
+        else if( attacksPerformed == stats.attacksToPerform && attackCooldownTimer > 0.0f)
+        {
+            attackCooldownTimer -= Time.deltaTime;
+        }
     }
+    
+  
 
     public override void Exit()
     {
@@ -65,8 +75,7 @@ public class RipperStateAttack : State
     //If it hits the player, damages them
     private void PerformMeleeAttack()
     {
-        Vector3 attackSize = new Vector3(1, 1, 10); //TODO: Scriptable object stats
-        float forwardOffset = attackSize.z * 0.5f;
+        float forwardOffset = stats.attackSize.z * 0.5f;
         Vector3 originPosition = agent.transform.position;
         originPosition += agent.transform.forward * forwardOffset;
         
@@ -74,7 +83,7 @@ public class RipperStateAttack : State
         
         Physics.OverlapBoxNonAlloc(
         center: originPosition,
-        halfExtents: attackSize,
+        halfExtents: stats.attackSize,
         orientation: agent.transform.rotation,
         results: hits,
         mask: LayerMask.GetMask("Player") //Will only ever find the player
@@ -82,7 +91,7 @@ public class RipperStateAttack : State
 
         if (hits[0])
         {
-            PlayerHealthSystem.Instance.DamagePlayer(10); //TODO: Scriptable object stats:
+            PlayerHealthSystem.Instance.DamagePlayer(stats.attackDamage); //TODO: Scriptable object stats:
         }
     }
 }

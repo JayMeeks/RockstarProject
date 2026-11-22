@@ -93,6 +93,13 @@ public class DaggerWeapon : BaseWeapon
         //Prevents using light attack if the dagger has been thrown already
         if (!weaponEnabled) { return;}
         
+        if (PlayerHealthSystem.Instance.TrySpendHealth(
+                weaponData.lightAttackHpCost, out var healthUsed) == false)
+        {
+            return;
+        }
+        PlayerHealthSystem.Instance.DamagePlayer(healthUsed);
+        
         //Reduces durability and weapon saturation
         ReduceDurability();
         UpdateMatProps();
@@ -100,8 +107,8 @@ public class DaggerWeapon : BaseWeapon
         //Creates the light attack at the player position
         //Returns bool for if the player is close enough to heal
         var attackObj = Instantiate(LightAttack); 
-        attackObj.GetComponent<DaggerLightAttackBehaviour>().Attack(PlayerMovement.Instance.transform.position,Camera.main.transform.rotation,Camera.main.transform.forward,out bool shouldHeal, weaponData.playerHpGainMaxRange);
-        if (shouldHeal) { PlayerHealthSystem.Instance.HealPlayer(weaponData.playerHpGainOnHit);}
+        attackObj.GetComponent<DaggerLightAttackBehaviour>().Attack(PlayerMovement.Instance.transform.position,Camera.main.transform.rotation,Camera.main.transform.forward, weaponData.playerHpGainMaxRange,weaponData.playerHpGainOnHit);
+
         
         if(currentDurability == 0){OnWeaponBreak();}
     }

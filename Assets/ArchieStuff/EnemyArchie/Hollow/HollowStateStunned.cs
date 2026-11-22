@@ -5,10 +5,12 @@ using UnityEngine.AI;
 public class HollowStateStunned : State
 {
     private float _stunTimer, _stunDuration;
+    private HollowStats stats;
   
-    public HollowStateStunned(EnemyStateController controller, NavMeshAgent agent, float stunDuration) : base(controller, agent)
+    public HollowStateStunned(EnemyStateController controller, NavMeshAgent agent, float stunDuration, HollowStats stats) : base(controller, agent)
     {
       _stunDuration = stunDuration;
+      this.stats = stats;
     }
 
     public override void Enter()
@@ -20,7 +22,7 @@ public class HollowStateStunned : State
     {
         if (_stunTimer <= 0)
         {
-            controller.ChangeState(new HollowStateDecision(controller, agent));
+            controller.ChangeState(new HollowStateDecision(controller, agent,stats));
         }
         else
         {

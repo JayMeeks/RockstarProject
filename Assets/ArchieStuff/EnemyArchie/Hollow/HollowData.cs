@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class HollowData : EnemyInfo
 {
+    [SerializeField] private HollowStats _stats;
+
     private void Start()
     {
         Initialize();
@@ -11,7 +13,7 @@ public class HollowData : EnemyInfo
 
     protected override void Initialize()
     {
-        MaxHealth = 100;
+        MaxHealth = _stats.maxHealth;
         CurrentHealth = MaxHealth;
     }
 

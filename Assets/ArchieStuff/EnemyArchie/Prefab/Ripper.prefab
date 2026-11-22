@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03107b30aee1bc84792c589ebfdb0463, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RipperController
+  stats: {fileID: 11400000, guid: 68638803255f49140957d7159229eedb, type: 2}
 --- !u!114 &4682342307577648044
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,6 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9993e5c666421954e87521e8d2ade577, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RipperData
+  _stats: {fileID: 11400000, guid: 68638803255f49140957d7159229eedb, type: 2}
 --- !u!54 &9035639456909216081
 Rigidbody:
   m_ObjectHideFlags: 0

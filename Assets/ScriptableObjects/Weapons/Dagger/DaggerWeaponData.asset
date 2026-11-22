@@ -15,6 +15,7 @@ MonoBehaviour:
   maxDurability: 10
   playerHpGainOnHit: 4
   playerHpGainMaxRange: 0
+  lightAttackHpCost: 0
   heavyAttackHpCost: 5
   specialAttackHpCost: 5
   specialForceMultiplier: 5

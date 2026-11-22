@@ -4,45 +4,45 @@ using UnityEngine.AI;
 
 public class HollowStateShoot : State
 {
+    private HollowStats stats;
    
-    private float shotInterval = 0.5f;
-    private float shotTimer = 0f;
-    private int shotCount = 0;
-    private int shotsToTake;
+
+    private float shotIntervalTimer = 0f;
+    private int shotCount;
+
     private GameObject bulletPrefab;
 
    
-    public HollowStateShoot(EnemyStateController controller, NavMeshAgent agent) : base(controller, agent)
+    public HollowStateShoot(EnemyStateController controller, NavMeshAgent agent, HollowStats stats) : base(controller, agent)
     {
-      this.controller = controller;
+      this.stats = stats;
     }
 
     public override void Enter()
     {
-        shotTimer = shotInterval;
-        shotCount = 0;
-        shotsToTake = 2;
+        shotIntervalTimer = stats.shotInterval;
+
         bulletPrefab = Resources.Load<GameObject>("Prefabs/HomingBullet");
     }
 
     public override void Tick()
     {
-        if (shotTimer <= 0.0f)
+        if (shotIntervalTimer <= 0.0f)
         {
             Object.Instantiate(bulletPrefab, agent.gameObject.transform.position, Quaternion.identity);
             shotCount++;
-            if (shotCount < shotsToTake)
+            if (shotCount < stats.shotCount)
             {
-                shotTimer = shotInterval;
+                shotIntervalTimer = stats.shotInterval;
             }
-            else if (shotCount == shotsToTake)
+            else if (shotCount == stats.shotCount)
             {
-                controller.ChangeState(new HollowStateDecision(controller, agent));
+                controller.ChangeState(new HollowStateDecision(controller, agent,stats));
             }
         }
         else
         {
-            shotTimer -= Time.deltaTime;
+            shotIntervalTimer -= Time.deltaTime;
         }
     }
 
@@ -54,25 +54,3 @@ public class HollowStateShoot : State
 }
 
     
-/*  if (shotTimer <= 0.0f)
-    {
-        Object.Instantiate(bulletPrefab, agent.transform.position, Quaternion.identity);
-        Vector3 playerPos = PlayerMovement.Instance.transform.position;
-        float distanceToPlayer = Vector3.Distance(agent.transform.position, playerPos);
-        if (distanceToPlayer < 10.0f && distanceToPlayer > 2.5f)
-        {
-            controller.ChangeState(new HollowStateFlee(controller, agent, 10.0f));
-        }
-        if (distanceToPlayer < 2.5f)
-        {
-            controller.ChangeState(new HollowStateMeleeAttack(controller, agent));
-        }
-        else
-        {
-            shotTimer = shotInterval;
-        }
-    }
-    else
-    {
-        shotTimer -= Time.deltaTime;
-    }*/
