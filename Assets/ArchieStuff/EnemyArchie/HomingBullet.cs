@@ -19,7 +19,7 @@ public class HomingBullet : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            PlayerHealthSystem.Instance.DamagePlayer(5);
+            PlayerHealthSystem.Instance.TakeDamage(5);
             Destroy(gameObject);
         }
     }

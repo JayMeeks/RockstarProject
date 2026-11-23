@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HollowData : EnemyInfo
 {
@@ -11,6 +12,7 @@ public class HollowData : EnemyInfo
     }
 
 
+
     protected override void Initialize()
     {
         MaxHealth = _stats.maxHealth;
@@ -19,7 +21,6 @@ public class HollowData : EnemyInfo
 
     public override void TakeDamage(int damage)
     {
-        Debug.Log(damage);
         CurrentHealth -= damage;
         if (CurrentHealth <= 0)
         {

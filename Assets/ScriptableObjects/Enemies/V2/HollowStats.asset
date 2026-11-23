@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34e4c493b09cfe64f9b19066913d845b, type: 3}
   m_Name: HollowStats
   m_EditorClassIdentifier: Assembly-CSharp::HollowStats
-  maxHealth: 0
+  maxHealth: 100
   moveSpeed: 3.5
   healthOnKill: 0
   shotChargeTime: 0.25

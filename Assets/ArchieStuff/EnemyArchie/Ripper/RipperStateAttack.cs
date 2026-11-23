@@ -91,7 +91,7 @@ public class RipperStateAttack : State
 
         if (hits[0])
         {
-            PlayerHealthSystem.Instance.DamagePlayer(stats.attackDamage); //TODO: Scriptable object stats:
+            PlayerHealthSystem.Instance.TakeDamage(stats.attackDamage); //TODO: Scriptable object stats:
         }
     }
 }

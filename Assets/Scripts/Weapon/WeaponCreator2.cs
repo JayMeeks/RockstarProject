@@ -104,7 +104,7 @@ public class WeaponCreator2 : MonoBehaviour
             return;
         }
         
-        PlayerHealthSystem.Instance.DamagePlayer(healthUsed);
+        PlayerHealthSystem.Instance.TakeDamage(healthUsed);
         
         PlayerWeaponSystem.Instance.SetHasWeapon(true);
         

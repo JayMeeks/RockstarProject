@@ -32,6 +32,13 @@ public class DaggerLightAttackBehaviour : MonoBehaviour
                 {
                     PlayerHealthSystem.Instance.HealPlayer(healAmount);
                 }
+
+                var statuses = hits[i].gameObject.GetComponent<IStatusEffectable>();
+                if (statuses != null)
+                {
+                   // Debug.Log("Adding bleed to: " + hits[i].gameObject.name);
+                    statuses.AddEffect(new BleedEffect(hits[i].gameObject,15));
+                }
             }
         }
         

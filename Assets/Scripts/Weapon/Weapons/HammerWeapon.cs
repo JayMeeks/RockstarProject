@@ -129,7 +129,7 @@ public class HammerWeapon : BaseWeapon
         {
             return;
         }
-        PlayerHealthSystem.Instance.DamagePlayer(healthUsed);
+        PlayerHealthSystem.Instance.TakeDamage(healthUsed);
     
         //Reduces durability and weapon saturation
         ReduceDurability();
@@ -162,7 +162,7 @@ public class HammerWeapon : BaseWeapon
         if (!stamina.TrySpend(stamina.heavyAttackCost))
             return;
 
-        PlayerHealthSystem.Instance.DamagePlayer(healthUsed);
+        PlayerHealthSystem.Instance.TakeDamage(healthUsed);
         
         
         

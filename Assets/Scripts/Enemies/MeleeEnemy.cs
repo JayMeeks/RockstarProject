@@ -34,7 +34,7 @@ namespace Enemies
             {
                 if (playerInRange)
                 {
-                    PlayerHealthSystem.Instance.DamagePlayer(meleeData.damage);
+                    PlayerHealthSystem.Instance.TakeDamage(meleeData.damage);
                 }
                 
                 _hasAttacked = true;
