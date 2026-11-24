@@ -1,4 +1,3 @@
-
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -201,9 +200,17 @@ public class PlayerMovement : MonoBehaviour
         HandleSlideInput();
         HandleSprintInput();
 
-        bool moving = moveX != 0f || moveZ != 0f;
 
-      
+        bool moving = Mathf.Abs(moveX) > 0.01f || Mathf.Abs(moveZ) > 0.01f;
+
+        // Automatically untoggle sprint when movement stops
+        if (!moving && isGrounded && !isSliding)
+        {
+            sprintToggled = false;
+        }
+
+
+
         bool wantsSprint = sprintToggled &&
             moving &&
             isGrounded &&

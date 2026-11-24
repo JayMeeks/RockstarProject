@@ -2882,13 +2882,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   wallRunForce: 10
-  wallJumpUpForce: 0.75
-  wallJumpSideForce: 1.25
+  wallJumpUpForce: 5
+  wallJumpSideForce: 2
   wallClimbSpeed: 1.5
   maxWallRunTime: 2.5
   wallCheckDistance: 1
   minimumHeight: 1.5
-  exitWallTime: 0.5
+  exitWallTime: 0.7
   useGravity: 0
   gravityCounterForce: 5
   orientation: {fileID: 409603468}
@@ -2907,7 +2907,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   walkSpeed: 5
   runSpeed: 7.5
-  wallRideSpeed: 7
+  wallRideSpeed: 8
   maxVerticalSpeed: 15
   accelerationMultiplier: 3
   slopeAccelerationMultiplier: 1
@@ -2915,17 +2915,17 @@ MonoBehaviour:
   sprintToggled: 0
   groundBraking: 45
   jumpForce: 5
-  jumpCooldown: 0.25
-  airControl: 0.5
-  dashSpeed: 30
-  dashDuration: 0.2
+  jumpCooldown: 1.2
+  airControl: 1
+  dashSpeed: 15
+  dashDuration: 0.5
   dashCooldown: 1
-  slideMomentumRetention: 0.98
-  runSlideBoost: 1
-  minSlideStartSpeed: 4
-  slideStopSpeed: 2
-  slideDeceleration: 1.5
-  slideSteering: 100
+  slideMomentumRetention: 0.7
+  runSlideBoost: 3
+  minSlideStartSpeed: 7.4
+  slideStopSpeed: 7.4
+  slideDeceleration: 2
+  slideSteering: 50
   cameraHolder: {fileID: 660984162}
   slideCameraDrop: 0.45
   slideCameraSpeed: 12
@@ -2945,7 +2945,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1682353478}
   serializedVersion: 5
-  m_Mass: 0.5
+  m_Mass: 0.8
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -3539,6 +3539,63 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1001 &149962746958993209
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4758820735392501731, guid: 57bb58fdc78c20940ab6e4f2a975647d, type: 3}
+      propertyPath: m_Name
+      value: HeathPickup
+      objectReference: {fileID: 0}
+    - target: {fileID: 9139814364461798849, guid: 57bb58fdc78c20940ab6e4f2a975647d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 22.21
+      objectReference: {fileID: 0}
+    - target: {fileID: 9139814364461798849, guid: 57bb58fdc78c20940ab6e4f2a975647d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.33
+      objectReference: {fileID: 0}
+    - target: {fileID: 9139814364461798849, guid: 57bb58fdc78c20940ab6e4f2a975647d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -12.67
+      objectReference: {fileID: 0}
+    - target: {fileID: 9139814364461798849, guid: 57bb58fdc78c20940ab6e4f2a975647d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9139814364461798849, guid: 57bb58fdc78c20940ab6e4f2a975647d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9139814364461798849, guid: 57bb58fdc78c20940ab6e4f2a975647d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9139814364461798849, guid: 57bb58fdc78c20940ab6e4f2a975647d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9139814364461798849, guid: 57bb58fdc78c20940ab6e4f2a975647d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9139814364461798849, guid: 57bb58fdc78c20940ab6e4f2a975647d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9139814364461798849, guid: 57bb58fdc78c20940ab6e4f2a975647d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 57bb58fdc78c20940ab6e4f2a975647d, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -3554,3 +3611,4 @@ SceneRoots:
   - {fileID: 1887400633}
   - {fileID: 1262691254}
   - {fileID: 632443240}
+  - {fileID: 149962746958993209}
