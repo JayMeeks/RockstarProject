@@ -19,11 +19,18 @@ public class PlayerMovement : MonoBehaviour
     public float slopeAccelerationMultiplier;
     public float groundDrag;
 
+    [Header("Sprinting")]
+    [SerializeField] private bool sprintToggled;
+
+    [Header("Ground Braking")]
+    public float groundBraking = 45f;
+
     [Header("Jumping")]
     public float jumpForce;
     public float jumpCooldown;
     public float airControl;
     private bool canJump;
+    private bool jumpingFromGround;
 
     [Header("Dashing")]
     public float dashSpeed = 20f;
@@ -34,7 +41,29 @@ public class PlayerMovement : MonoBehaviour
 
     private float dashTimer;
     private float nextDashTime;
+    private float dashVelocitySpeed;
     private Vector3 dashDirection;
+
+    private float airborneSpeedLimit;
+
+    [Header("Sliding")]
+    [Range(0f, 1f)] public float slideMomentumRetention = 0.95f;
+    [Min(0f)] public float runSlideBoost = 1f;
+    public float minSlideStartSpeed = 4f;
+    public float slideStopSpeed = 2f;
+    public float slideDeceleration = 1.5f;
+    public float slideSteering = 100f;
+
+    public bool isSliding { get; private set; }
+
+    private Vector3 slideVelocity;
+
+    [Header("Slide Camera")]
+    public Transform cameraHolder;
+    public float slideCameraDrop = 0.7f;
+    public float slideCameraSpeed = 10f;
+
+    private Vector3 originalCameraPosition;
 
     [Header("Ground Check")]
     public float playerHeight;
@@ -65,7 +94,8 @@ public class PlayerMovement : MonoBehaviour
         Sprinting,
         WallRiding,
         Air,
-        Dashing
+        Dashing,
+        Sliding
     }
 
     public bool wallRiding;
@@ -102,9 +132,14 @@ public class PlayerMovement : MonoBehaviour
             controls.Player.Disable();
 
         isDashing = false;
+        isSliding = false;
+        sprintToggled = false;
 
         if (stamina != null)
             stamina.ResetSprintDrain();
+
+        if (cameraHolder != null)
+            cameraHolder.localPosition = originalCameraPosition;
     }
 
     private void OnDestroy()
@@ -121,10 +156,15 @@ public class PlayerMovement : MonoBehaviour
         body.freezeRotation = true;
         canJump = true;
         currentSpeed = walkSpeed;
+
+        if (cameraHolder != null)
+            originalCameraPosition = cameraHolder.localPosition;
     }
 
     private void Update()
     {
+        bool wasGrounded = isGrounded;
+
         isGrounded = Physics.Raycast(
             transform.position,
             Vector3.down,
@@ -132,38 +172,94 @@ public class PlayerMovement : MonoBehaviour
             groundLayer
         );
 
+        if (wasGrounded && !isGrounded)
+        {
+            airborneSpeedLimit = Mathf.Max(
+                airborneSpeedLimit,
+                GetHorizontalVelocity().magnitude
+            );
+        }
+        else if (!wasGrounded && isGrounded)
+        {
+            if (isSliding)
+            {
+                Vector3 landingVelocity = GetHorizontalVelocity();
+
+                if (slideVelocity.sqrMagnitude > landingVelocity.sqrMagnitude)
+                    landingVelocity = slideVelocity;
+
+                slideVelocity = GetGroundSlideVelocity(landingVelocity);
+            }
+
+            airborneSpeedLimit = 0f;
+            jumpingFromGround = false;
+        }
+
         ReadInput();
         ReadDashInput();
+        HandleSlideInput();
+        HandleSprintInput();
 
-        bool wantsSprint = isGrounded &&
+
+        bool moving = Mathf.Abs(moveX) > 0.01f || Mathf.Abs(moveZ) > 0.01f;
+
+        // Automatically untoggle sprint when movement stops
+        if (!moving && isGrounded && !isSliding)
+        {
+            sprintToggled = false;
+        }
+
+
+
+        bool wantsSprint = sprintToggled &&
+            moving &&
+            isGrounded &&
             !wallRiding &&
             !isDashing &&
-            controls.Player.Sprint.IsPressed();
+            !isSliding;
 
-        bool moving = moveX != 0f || moveZ != 0f;
-
-        if (wantsSprint && moving)
+        if (wantsSprint)
         {
             canSprint = stamina.TryDrainSprint(Time.deltaTime);
+
+ 
+            if (!canSprint || !stamina.CanSpend(stamina.sprintCost))
+                sprintToggled = false;
         }
         else
         {
             stamina.ResetSprintDrain();
-            canSprint = wantsSprint && stamina.CanSpend(stamina.sprintCost);
+            canSprint = false;
         }
 
         HandleState();
         LimitSpeed();
 
-        body.linearDamping = isGrounded ? groundDrag : 0f;
+        body.linearDamping =
+            isGrounded &&
+            !isDashing &&
+            !isSliding &&
+            !jumpingFromGround
+                ? groundDrag
+                : 0f;
+
+        UpdateSlideCamera();
     }
 
     private void FixedUpdate()
     {
         if (isDashing)
+        {
             ApplyDash();
+        }
+        else if (isSliding)
+        {
+            ApplySlide();
+        }
         else
+        {
             ApplyMovement();
+        }
     }
 
     private void ReadInput()
@@ -184,6 +280,15 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+
+    private void HandleSprintInput()
+    {
+        if (controls.Player.Sprint.WasPressedThisFrame() && !wallRiding)
+        {
+            sprintToggled = !sprintToggled;
+        }
+    }
+
     private void ReadDashInput()
     {
         if (controls.Player.Dash.WasPressedThisFrame() &&
@@ -194,11 +299,176 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void HandleSlideInput()
+    {
+        if (isSliding)
+        {
+            if (wallRiding ||
+                isDashing ||
+                !controls.Player.WallClimbDown.IsPressed() ||
+                (isGrounded && slideVelocity.magnitude <= slideStopSpeed))
+            {
+                StopSlide();
+            }
+
+            return;
+        }
+
+        if (controls.Player.WallClimbDown.WasPressedThisFrame() &&
+            !wallRiding &&
+            !isDashing &&
+            (!isGrounded || !leavingSlope))
+        {
+            StartSlide();
+        }
+    }
+
+    private void StartSlide()
+    {
+        if (isSliding)
+            return;
+
+        Vector3 horizontalVelocity = GetHorizontalVelocity();
+
+        if (isGrounded && horizontalVelocity.magnitude < minSlideStartSpeed)
+            return;
+
+        slideVelocity = isGrounded
+            ? GetGroundSlideVelocity(horizontalVelocity)
+            : horizontalVelocity;
+
+        isSliding = true;
+        stamina.ResetSprintDrain();
+    }
+
+    private Vector3 GetGroundSlideVelocity(Vector3 velocity)
+    {
+        float speed = velocity.magnitude;
+        float maxRunSlideSpeed = runSpeed + runSlideBoost;
+
+        if (runSpeed > 0f &&
+            runSlideBoost > 0f &&
+            speed >= runSpeed * 0.95f &&
+            speed < maxRunSlideSpeed)
+        {
+            float boostedSpeed = Mathf.Min(
+                speed + runSlideBoost,
+                maxRunSlideSpeed
+            );
+
+            return velocity.normalized * boostedSpeed;
+        }
+
+        return velocity * slideMomentumRetention;
+    }
+
+    private void ApplySlide()
+    {
+        if (!isGrounded)
+        {
+            Vector3 horizontalVelocity = GetHorizontalVelocity();
+
+            if (horizontalVelocity.sqrMagnitude > slideVelocity.sqrMagnitude)
+            {
+                slideVelocity = horizontalVelocity;
+            }
+            else if (horizontalVelocity.sqrMagnitude > 0.01f &&
+                     horizontalVelocity.magnitude >= slideVelocity.magnitude * 0.8f)
+            {
+                slideVelocity =
+                    horizontalVelocity.normalized * slideVelocity.magnitude;
+            }
+
+            body.useGravity = true;
+            return;
+        }
+
+        Vector3 desiredDirection =
+            orientation.forward * moveZ +
+            orientation.right * moveX;
+
+        desiredDirection.y = 0f;
+
+        if (desiredDirection.sqrMagnitude > 0.01f &&
+            slideVelocity.sqrMagnitude > 0.001f)
+        {
+            Vector3 newDirection = Vector3.RotateTowards(
+                slideVelocity.normalized,
+                desiredDirection.normalized,
+                slideSteering * Mathf.Deg2Rad * Time.fixedDeltaTime,
+                0f
+            );
+
+            slideVelocity = newDirection * slideVelocity.magnitude;
+        }
+
+        slideVelocity = Vector3.MoveTowards(
+            slideVelocity,
+            Vector3.zero,
+            slideDeceleration * Time.fixedDeltaTime
+        );
+
+        body.linearVelocity = new Vector3(
+            slideVelocity.x,
+            body.linearVelocity.y,
+            slideVelocity.z
+        );
+
+        body.useGravity = true;
+    }
+
+    private void StopSlide()
+    {
+        if (!isSliding)
+            return;
+
+        isSliding = false;
+
+        if (!isGrounded)
+        {
+            airborneSpeedLimit = Mathf.Max(
+                airborneSpeedLimit,
+                GetHorizontalVelocity().magnitude
+            );
+        }
+    }
+
+    private void UpdateSlideCamera()
+    {
+        if (cameraHolder == null)
+            return;
+
+        Vector3 targetPosition = originalCameraPosition;
+
+        if (isSliding)
+            targetPosition.y -= slideCameraDrop;
+
+        cameraHolder.localPosition = Vector3.Lerp(
+            cameraHolder.localPosition,
+            targetPosition,
+            Mathf.Clamp01(Time.deltaTime * slideCameraSpeed)
+        );
+    }
+
+    private Vector3 GetHorizontalVelocity()
+    {
+        return new Vector3(
+            body.linearVelocity.x,
+            0f,
+            body.linearVelocity.z
+        );
+    }
+
     private void HandleState()
     {
         if (isDashing)
         {
             state = MovementState.Dashing;
+            return;
+        }
+        else if (isSliding)
+        {
+            state = MovementState.Sliding;
             return;
         }
         else if (wallRiding)
@@ -276,14 +546,23 @@ public class PlayerMovement : MonoBehaviour
 
     private void StartDash()
     {
-        Vector3 direction = orientation.forward * moveZ +
-                            orientation.right * moveX;
+        if (isSliding)
+            StopSlide();
+
+        Vector3 direction =
+            orientation.forward * moveZ +
+            orientation.right * moveX;
 
         if (direction.sqrMagnitude < 0.01f)
             direction = orientation.forward;
 
         direction.y = 0f;
         dashDirection = direction.normalized;
+
+        dashVelocitySpeed = Mathf.Max(
+            dashSpeed,
+            GetHorizontalVelocity().magnitude
+        );
 
         isDashing = true;
         dashTimer = dashDuration;
@@ -292,12 +571,17 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyDash()
     {
+        dashVelocitySpeed = Mathf.Max(
+            dashVelocitySpeed,
+            GetHorizontalVelocity().magnitude
+        );
+
         Vector3 velocity = body.linearVelocity;
 
         body.linearVelocity = new Vector3(
-            dashDirection.x * dashSpeed,
+            dashDirection.x * dashVelocitySpeed,
             velocity.y,
-            dashDirection.z * dashSpeed
+            dashDirection.z * dashVelocitySpeed
         );
 
         dashTimer -= Time.fixedDeltaTime;
@@ -309,14 +593,28 @@ public class PlayerMovement : MonoBehaviour
     private void StopDash()
     {
         isDashing = false;
+
+        if (!isGrounded)
+        {
+            airborneSpeedLimit = Mathf.Max(
+                airborneSpeedLimit,
+                GetHorizontalVelocity().magnitude
+            );
+        }
+
+        if (!wallRiding && controls.Player.WallClimbDown.IsPressed())
+        {
+            StartSlide();
+        }
     }
 
     private void ApplyMovement()
     {
-        movementDirection = orientation.forward * moveZ +
-                            orientation.right * moveX;
+        movementDirection =
+            orientation.forward * moveZ +
+            orientation.right * moveX;
 
-        if (IsOnSlope() && !leavingSlope)
+        if (isGrounded && IsOnSlope() && !leavingSlope)
         {
             body.AddForce(
                 GetSlopeDirection(movementDirection) *
@@ -350,34 +648,76 @@ public class PlayerMovement : MonoBehaviour
         }
 
         if (!wallRiding)
-            body.useGravity = !IsOnSlope();
+        {
+            body.useGravity = !(
+                isGrounded &&
+                IsOnSlope() &&
+                !leavingSlope
+            );
+        }
+
+        if (isGrounded &&
+            !wallRiding &&
+            !jumpingFromGround &&
+            Mathf.Abs(moveX) < 0.01f &&
+            Mathf.Abs(moveZ) < 0.01f)
+        {
+            Vector3 horizontalVelocity = GetHorizontalVelocity();
+
+            horizontalVelocity = Vector3.MoveTowards(
+                horizontalVelocity,
+                Vector3.zero,
+                groundBraking * Time.fixedDeltaTime
+            );
+
+            body.linearVelocity = new Vector3(
+                horizontalVelocity.x,
+                body.linearVelocity.y,
+                horizontalVelocity.z
+            );
+        }
     }
 
     private void LimitSpeed()
     {
-        if (isDashing)
+        if (isDashing || isSliding)
             return;
 
-        if (IsOnSlope() && !leavingSlope)
+        float allowedSpeed;
+
+        if (isGrounded && !jumpingFromGround)
         {
-            if (body.linearVelocity.magnitude > currentSpeed)
+            if (state == MovementState.Sprinting)
+                allowedSpeed = runSpeed;
+            else if (state == MovementState.WallRiding)
+                allowedSpeed = wallRideSpeed;
+            else
+                allowedSpeed = walkSpeed;
+        }
+        else
+        {
+            allowedSpeed = Mathf.Max(
+                currentSpeed,
+                airborneSpeedLimit
+            );
+        }
+
+        if (isGrounded && IsOnSlope() && !leavingSlope)
+        {
+            if (body.linearVelocity.magnitude > allowedSpeed)
             {
                 body.linearVelocity =
-                    body.linearVelocity.normalized * currentSpeed;
+                    body.linearVelocity.normalized * allowedSpeed;
             }
         }
         else
         {
-            Vector3 horizontalVelocity = new Vector3(
-                body.linearVelocity.x,
-                0f,
-                body.linearVelocity.z
-            );
+            Vector3 horizontalVelocity = GetHorizontalVelocity();
 
-            if (horizontalVelocity.magnitude > currentSpeed)
+            if (horizontalVelocity.magnitude > allowedSpeed)
             {
                 Vector3 limitedVelocity =
-                    horizontalVelocity.normalized * currentSpeed;
+                    horizontalVelocity.normalized * allowedSpeed;
 
                 body.linearVelocity = new Vector3(
                     limitedVelocity.x,
@@ -400,6 +740,15 @@ public class PlayerMovement : MonoBehaviour
 
     private void Jump()
     {
+        if (isSliding)
+            StopSlide();
+
+        airborneSpeedLimit = Mathf.Max(
+            airborneSpeedLimit,
+            GetHorizontalVelocity().magnitude
+        );
+
+        jumpingFromGround = true;
         leavingSlope = true;
 
         body.linearVelocity = new Vector3(
