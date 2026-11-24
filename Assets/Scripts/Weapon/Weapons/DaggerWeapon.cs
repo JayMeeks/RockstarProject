@@ -92,13 +92,23 @@ public class DaggerWeapon : BaseWeapon
     {
         //Prevents using light attack if the dagger has been thrown already
         if (!weaponEnabled) { return;}
+        
+        if (PlayerHealthSystem.Instance.TrySpendHealth(
+                weaponData.lightAttackHpCost, out var healthUsed) == false)
+        {
+            return;
+        }
+        PlayerHealthSystem.Instance.TakeDamage(healthUsed);
+        
+        //Reduces durability and weapon saturation
         ReduceDurability();
         UpdateMatProps();
 
-        
+        //Creates the light attack at the player position
+        //Returns bool for if the player is close enough to heal
         var attackObj = Instantiate(LightAttack); 
-        attackObj.GetComponent<DaggerLightAttackBehaviour>().Attack(PlayerMovement.Instance.transform.position,Camera.main.transform.rotation,Camera.main.transform.forward,out bool shouldHeal, weaponData.playerHpGainMaxRange);
-        if (shouldHeal) { PlayerHealthSystem.Instance.HealPlayer(weaponData.playerHpGainOnHit);}
+        attackObj.GetComponent<DaggerLightAttackBehaviour>().Attack(PlayerMovement.Instance.transform.position,Camera.main.transform.rotation,Camera.main.transform.forward, weaponData.playerHpGainMaxRange,weaponData.playerHpGainOnHit);
+
         
         if(currentDurability == 0){OnWeaponBreak();}
     }
@@ -122,20 +132,21 @@ public class DaggerWeapon : BaseWeapon
         if (!stamina.TrySpend(stamina.heavyAttackCost))
             return;
 
-        PlayerHealthSystem.Instance.DamagePlayer(healthUsed);
+        PlayerHealthSystem.Instance.TakeDamage(healthUsed);
 
         ReduceDurability();
         UpdateMatProps();
 
         weaponEnabled = false;
         PlayerWeaponSystem.Instance.SetWeaponVisible(false);
-
+        
+        //Creates heavy attack projectile at player position and rotation
         var attackObj = Instantiate(
             HeavyAttack,
             PlayerMovement.Instance.transform.position,
             transform.rotation
         );
-
+    
         attackObj.GetComponent<DaggerHeavyAttackBehaviour>()
             .Attack(Camera.main.transform.forward);
 
@@ -153,7 +164,9 @@ public class DaggerWeapon : BaseWeapon
 
         if (stamina == null || !stamina.CanSpend(stamina.knifeSpecialCost))
             return;
-
+        
+        
+        //Raycast forwards to check for a wall within range
         if (Physics.Raycast(
             Camera.main.transform.position,
             Camera.main.transform.forward,
@@ -162,7 +175,7 @@ public class DaggerWeapon : BaseWeapon
         {
             if (!stamina.TrySpend(stamina.knifeSpecialCost))
                 return;
-
+            //If hit, launches player towards hit point
             Debug.Log("Raycast hit" + hit.collider.gameObject.name);
 
             _lineRenderer.enabled = true;
@@ -170,7 +183,7 @@ public class DaggerWeapon : BaseWeapon
             _lineRenderer.SetPosition(1, hit.point);
 
             Vector3 launchDir = (hit.point - transform.position).normalized;
-            PlayerMovement.Instance.ApplyImpulse(launchDir, 17);
+            PlayerMovement.Instance.ApplyImpulse(launchDir, weaponData.specialForceMultiplier);
         }
 
         //_lineRenderer.enabled = false; // this is disabling the line renderer immediately after the special is used, ive done a quick fix but feel free to change it 
@@ -188,7 +201,8 @@ public class DaggerWeapon : BaseWeapon
 
     protected override void OnWeaponBreak()
     {
-        PlayerWeaponSystem.Instance.EquippedWeapon = null;
+      //  PlayerWeaponSystem.Instance.EquippedWeapon = null;
+        PlayerWeaponSystem.Instance.EquipUnarmedWeapon();
         Destroy(gameObject);
     }
     

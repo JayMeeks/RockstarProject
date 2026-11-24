@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class PlayerHealthSystem : MonoBehaviour
+public class PlayerHealthSystem : MonoBehaviour, IDamageable
 {
     [Header("Health")]
     private int maxHealth = 100;
@@ -17,6 +17,8 @@ public class PlayerHealthSystem : MonoBehaviour
 
     private void Awake()
     {
+        //Singleton setup
+        //Ensures only one can ever exist
         if (Instance != null && Instance != this)
         {
             Destroy(this.gameObject);
@@ -25,15 +27,23 @@ public class PlayerHealthSystem : MonoBehaviour
         {
             _instance = this;
             DontDestroyOnLoad(this.gameObject);
-            
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-            SetCurrentHealth(GetMaxHealth());
+
         }
     }
-    
-    
-    
+
+    private void Start()
+    {
+        //Set default health
+        //After awake loop
+        SetCurrentHealth(GetMaxHealth());
+    }
+
+    //Used by other scripts that want to damage the player
+    //If the player has sufficient health, returns true and sets spent hp to all damage
+    //If the player has the exact health, returns true and sets spent hp to all damage but 1
+    //If false, returns false and sets spent hp to 0
+    //This function does not influence the player health at all
+    //Scripts concerned with this function will then damage the player with the out spentHpValue
     public bool TrySpendHealth(int tryHpValue, out int spentHpValue)
     {
         if (GetCurrentHealth() > tryHpValue)
@@ -53,6 +63,27 @@ public class PlayerHealthSystem : MonoBehaviour
         }
     }
     
+    //Damages player and updates UI
+    public void TakeDamage(int damage)
+    { 
+        currentHealth -= damage; 
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
+    
+    //Heals player and updates UI
+    //Does not allow player to be healed beyond their max HP
+    public void HealPlayer(int heal)
+    { 
+        if (currentHealth + heal >= maxHealth)
+        { 
+          currentHealth = maxHealth;
+        }
+        else
+        {
+          currentHealth += heal;
+        } 
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
     
     public void SetCurrentHealth(int currentHealth)
     {
@@ -64,26 +95,7 @@ public class PlayerHealthSystem : MonoBehaviour
     {
         return currentHealth;
     }
-
-    public void DamagePlayer(int damage)
-    {
-        currentHealth -= damage;
-        OnHealthChanged?.Invoke(currentHealth, maxHealth);
-    }
-
-    public void HealPlayer(int heal)
-    {
-        if (currentHealth + heal >= maxHealth)
-        {
-            currentHealth = maxHealth;
-        }
-        else
-        {
-            currentHealth += heal;
-        }
-        OnHealthChanged?.Invoke(currentHealth, maxHealth);
-    }
-
+    
     public void SetMaxHealth(int maxHealth)
     {
         this.maxHealth = maxHealth;

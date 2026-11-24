@@ -10,6 +10,15 @@ public class PlayerWeaponSystem : MonoBehaviour
     public BaseWeapon EquippedWeapon;
     public Transform weaponHolder;
     
+    [Header("Input")]
+    private PlayerInputA _playerInput;
+    private PlayerInputA.PlayerDefaultActions _playerDefaultActions;
+
+
+
+    [SerializeField] private BaseWeapon unarmedWeapon;
+
+    private bool hasWeapon;
      
     private static PlayerWeaponSystem _instance; 
     public static PlayerWeaponSystem Instance {get{return _instance;}}
@@ -19,7 +28,8 @@ public class PlayerWeaponSystem : MonoBehaviour
 
 
     private void Awake()
-    {
+    {   
+        //Singleton setup
         if (Instance != null && Instance != this)
         {
             Destroy(this.gameObject);
@@ -35,8 +45,12 @@ public class PlayerWeaponSystem : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             
+            //Create weapon creator menu. This should maybe be somewhere else?
             weaponCreator = Instantiate(weaponCreatorPrefab);
             weaponCreator.SetActive(false);
+            
+            //Set default weapon to unarmed
+            EquipUnarmedWeapon();
         }
     }
 
@@ -58,16 +72,15 @@ public class PlayerWeaponSystem : MonoBehaviour
 
     
      
-    [Header("Input")]
-    private PlayerInputA _playerInput;
-    private PlayerInputA.PlayerDefaultActions _playerDefaultActions;
-    
-    
 
     
+
+    //Opens menu to create weapon
     private void OpenCreateWeaponUI(InputAction.CallbackContext obj)
     {
-        if (EquippedWeapon != null) { return; }
+        //Prevents opening menu if player already has a weapon, or not enough health to create one
+        if (hasWeapon) { return; }
+        if (PlayerHealthSystem.Instance.currentHealth < 25.0f) { return;}
         
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -89,6 +102,20 @@ public class PlayerWeaponSystem : MonoBehaviour
     {
         return weaponHolder;
     }
+
+    //Sets weapon to unarmed
+    public void EquipUnarmedWeapon()
+    {
+        hasWeapon = false;
+        EquippedWeapon = Instantiate(unarmedWeapon, GetWeaponHolder(), false);
+    }
+
+    public void SetHasWeapon(bool hasWeapon)
+    {
+        this.hasWeapon = hasWeapon;
+    }
+    
+
 
     public void SetWeaponEnabled(bool enabled)
     {

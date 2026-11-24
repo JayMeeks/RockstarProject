@@ -12,29 +12,37 @@ public class DaggerLightAttackBehaviour : MonoBehaviour
     /// <param name="originPosition">Start position of the attack overlap box</param>
     /// <param name="originRotation">Rotation of the attack overlap box</param>
     /// <param name="playerForward">Forward of the player camera</param>
-    /// <param name="shouldHeal">Whether the player should heal off of the hit</param>
     /// <param name="maxHealRange">Range at which the player should regain health after hit</param>
-    public void Attack(Vector3 originPosition, Quaternion originRotation, Vector3 playerForward , out bool shouldHeal, float maxHealRange)
+    /// <param name="healAmount">Amount player should heal if within range</param>
+    public void Attack(Vector3 originPosition, Quaternion originRotation, Vector3 playerForward , float maxHealRange, int healAmount)
     {
-        bool _shouldHeal = false;
         float forwardOffset = data.AttackSize.z * 0.5f;
         originPosition += playerForward * forwardOffset;
         
+        //Checks for colliders within the attack range of the dagger
+        //Applied damage to all enemies within
         Collider[] hits = Physics.OverlapBox(originPosition, data.AttackSize,originRotation);
         for (int i = 0; i < hits.Length; i++)
         {
             if (hits[i].gameObject.CompareTag("Enemy"))
             {
-                var enemy = hits[i].gameObject.GetComponent<EnemyBase>();
+                var enemy = hits[i].gameObject.GetComponent<EnemyInfo>();
                 enemy.TakeDamage(data.attackDamage);
                 if (Vector3.Distance(originPosition, hits[i].gameObject.transform.position) < maxHealRange)
                 {
-                    _shouldHeal = true;
+                    PlayerHealthSystem.Instance.HealPlayer(healAmount);
+                }
+
+                var statuses = hits[i].gameObject.GetComponent<IStatusEffectable>();
+                if (statuses != null)
+                {
+                   // Debug.Log("Adding bleed to: " + hits[i].gameObject.name);
+                    statuses.AddEffect(new BleedEffect(hits[i].gameObject,15));
                 }
             }
         }
         
-        shouldHeal = _shouldHeal;
+
         
         if (data.DebugView) { SpawnTestCube(originPosition, originRotation,data.DebugCubeLifespan); }
 

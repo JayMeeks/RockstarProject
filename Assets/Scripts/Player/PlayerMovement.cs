@@ -466,4 +466,9 @@ public class PlayerMovement : MonoBehaviour
             slopeInfo.normal
         ).normalized;
     }
+
+    public Rigidbody GetPlayerRigidBody()
+    {
+        return body;
+    }
 }

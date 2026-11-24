@@ -59,7 +59,7 @@ namespace Enemies
         private void OnTriggerEnter(Collider other)
         {
             if (!other.CompareTag("Player")) return;
-            PlayerHealthSystem.Instance.DamagePlayer(_damage);
+            PlayerHealthSystem.Instance.TakeDamage(_damage);
             Destroy(gameObject);
         }
 

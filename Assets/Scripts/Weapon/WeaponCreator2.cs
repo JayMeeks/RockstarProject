@@ -104,13 +104,16 @@ public class WeaponCreator2 : MonoBehaviour
             return;
         }
         
-        PlayerHealthSystem.Instance.DamagePlayer(healthUsed);
+        PlayerHealthSystem.Instance.TakeDamage(healthUsed);
+        
+        PlayerWeaponSystem.Instance.SetHasWeapon(true);
         
         
-        
+        Destroy(PlayerWeaponSystem.Instance.GetEquippedWeapon().gameObject);
         //Again, kind of ugly. Can be improved later if needed
         if (angle is > 45f and < 135f)
-        { 
+        {
+           
           PlayerWeaponSystem.Instance.EquippedWeapon = Instantiate(weapon1, PlayerWeaponSystem.Instance.GetWeaponHolder(), false);
             
 

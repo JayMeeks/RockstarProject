@@ -43,7 +43,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void Awake()
     {
-        player = PlayerMovement.Instance.transform;
+     
         _agent = GetComponent<NavMeshAgent>();
         maxHp = 40;
         currentHp = maxHp;
@@ -52,7 +52,7 @@ public abstract class EnemyBase : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+      //  player = PlayerMovement.Instance.transform;
         FollowPlayer();
     }
 
@@ -61,8 +61,8 @@ public abstract class EnemyBase : MonoBehaviour
     {
         var distanceToPlayer = Vector3.Distance(player.position, transform.position);
 
-        uiCanvas.transform.LookAt(transform.position - (player.position - transform.position));
-        uiCanvas.transform.rotation = Quaternion.LookRotation(transform.position - player.position);
+      //  uiCanvas.transform.LookAt(transform.position - (player.position - transform.position));
+      //  uiCanvas.transform.rotation = Quaternion.LookRotation(transform.position - player.position);
         slider.value = (float)currentHp / (float)maxHp;
 
 
@@ -111,7 +111,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     private void HandleDeath()
     {
-        spawner.EnemyDead();
+     if(spawner != null){   spawner.EnemyDead();}
         Destroy(gameObject);
     }
 

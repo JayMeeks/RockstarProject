@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 209de6eb476e5e1449b9d0182da02fa1, type: 3}
+  m_Name: RipperStats
+  m_EditorClassIdentifier: Assembly-CSharp::RipperStats
+  maxHealth: 100
+  moveSpeed: 3.5
+  healthOnKill: 0
+  attackStartRange: 1
+  attackWindup: 1
+  attacksToPerform: 2
+  attackInterval: 0.25
+  attackCooldown: 1
+  attackDamage: 10
+  attackSize: {x: 1, y: 1, z: 1}
+  stunTimeMultiplier: 1
+  knockbackMultiplier: 1
