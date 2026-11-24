@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class PlayerHealthSystem : MonoBehaviour
+public class PlayerHealthSystem : MonoBehaviour ,IDamageable
 {
     [Header("Health")]
     private int maxHealth = 100;
@@ -66,7 +66,7 @@ public class PlayerHealthSystem : MonoBehaviour
         return currentHealth;
     }
 
-    public void DamagePlayer(int damage)
+    public void TakeDamage(int damage)
     {
         currentHealth -= damage;
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
