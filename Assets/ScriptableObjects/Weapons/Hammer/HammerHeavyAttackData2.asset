@@ -19,3 +19,5 @@ MonoBehaviour:
   WaveLifespan: 0.75
   MaxStepHeight: 0.5
   ForceMultiplier: 5
+  playerHpGainMaxRange: 3
+  hpRegainOnHit: 20

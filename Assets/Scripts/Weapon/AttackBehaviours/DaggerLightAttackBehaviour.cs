@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class DaggerLightAttackBehaviour : MonoBehaviour
@@ -22,23 +23,33 @@ public class DaggerLightAttackBehaviour : MonoBehaviour
         //Checks for colliders within the attack range of the dagger
         //Applied damage to all enemies within
         Collider[] hits = Physics.OverlapBox(originPosition, data.AttackSize,originRotation);
+        List<GameObject> alreadyHitEnemies = new List<GameObject>();
         for (int i = 0; i < hits.Length; i++)
         {
-            if (hits[i].gameObject.CompareTag("Enemy"))
+            if (hits[i].gameObject.CompareTag("EnemyCriticalHurtbox") || hits[i].gameObject.CompareTag("EnemyStandardHurtbox"))
             {
-                var enemy = hits[i].gameObject.GetComponent<EnemyInfo>();
+                GameObject owningEnemy = hits[i].gameObject.transform.root.gameObject;
+                if (alreadyHitEnemies.Contains(owningEnemy)){return;}
+            
+                var enemy = hits[i].gameObject.GetComponentInParent<EnemyInfo>();
                 enemy.TakeDamage(data.attackDamage);
                 if (Vector3.Distance(originPosition, hits[i].gameObject.transform.position) < maxHealRange)
                 {
                     PlayerHealthSystem.Instance.HealPlayer(healAmount);
                 }
 
-                var statuses = hits[i].gameObject.GetComponent<IStatusEffectable>();
+                var statuses = hits[i].gameObject.GetComponentInParent<IStatusEffectable>();
                 if (statuses != null)
                 {
                    // Debug.Log("Adding bleed to: " + hits[i].gameObject.name);
-                    statuses.AddEffect(new BleedEffect(hits[i].gameObject,15));
+                    statuses.AddEffect(new BleedEffect(hits[i].gameObject,2));
                 }
+                
+                alreadyHitEnemies.Add(owningEnemy);
+                
+           
+                
+              
             }
         }
         

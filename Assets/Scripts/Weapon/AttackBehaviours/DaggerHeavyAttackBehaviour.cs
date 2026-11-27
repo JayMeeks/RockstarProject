@@ -52,11 +52,19 @@ public class DaggerHeavyAttackBehaviour : MonoBehaviour
    private void OnTriggerEnter(Collider other)
    {
        if(other.CompareTag("Player")){return;}
-       if (other.gameObject.CompareTag("Enemy"))
+       if (other.gameObject.CompareTag("EnemyCriticalHurtbox"))
        {
-           var enemy = other.gameObject.GetComponent<EnemyInfo>();
-           enemy.TakeDamage(data.attackDamage);
+           var enemy = other.gameObject.GetComponentInParent<EnemyInfo>();
+           enemy.TakeDamage(data.criticalHitDamage);
+           colliderHit = true;
        }
-        colliderHit = true;
+       else if (other.gameObject.CompareTag("EnemyStandardHurtbox"))
+       {
+           var enemy = other.gameObject.GetComponentInParent<EnemyInfo>();
+           enemy.TakeDamage(data.attackDamage);
+           colliderHit = true;
+       }
+       PlayerHealthSystem.Instance?.HealPlayer(data.hpRegainOnHit);
+       
    }
 }

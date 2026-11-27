@@ -15,6 +15,8 @@ public class PunchingBagData : EnemyInfo
     {
         MaxHealth = _stats.maxHealth;
         CurrentHealth = MaxHealth;
+        
+        AddBloodValue(_stats.healthOnKill);
     }
 
     public override void TakeDamage(int damage)
@@ -28,6 +30,7 @@ public class PunchingBagData : EnemyInfo
 
     protected override void OnDeath()
     {
+        CreateBloodPool(bloodPoolValue);
         Destroy(gameObject);
     }
 }

@@ -15,5 +15,5 @@ MonoBehaviour:
   attackDamage: 15
   throwSpeedMult: 100
   maxHeavyRange: 20
-  maxSpecialRange: 0
-  specialForceMult: 0
+  criticalHitDamage: 0
+  hpRegainOnHit: 10

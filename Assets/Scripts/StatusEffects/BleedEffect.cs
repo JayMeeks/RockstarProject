@@ -7,10 +7,14 @@ public class BleedEffect : StatusEffectBase
     private int tickCount;
 
     private float damageTimer = 0;
+    private bool hasBeenRehit = false;
+
+
 
 
     private IStatusEffectable targetStatuses;
     private IDamageable targetHealth;
+    private IDropsBloodPool targetBloodPool;
     
     
 
@@ -25,18 +29,23 @@ public class BleedEffect : StatusEffectBase
     public override void OnAdd()
     {
         tickCount = 5;
-      
         damageTimer = 1.0f;
+        hasBeenRehit = false;
+
         
-        targetHealth = targetObject.GetComponent<IDamageable>();
-        targetStatuses = targetObject.GetComponent<IStatusEffectable>();
+        targetHealth = targetObject.GetComponentInParent<IDamageable>();
+        targetStatuses = targetObject.GetComponentInParent<IStatusEffectable>();
+        targetBloodPool = targetObject.GetComponentInParent<IDropsBloodPool>();
 
        
     }
 
     public override void OnReAdd()
     {
-        tickCount = 5;
+       if(hasBeenRehit){return;}
+       tickCount = 5;
+       damage *= 2;
+       hasBeenRehit = true;
     }
 
     public override void Tick()
@@ -44,7 +53,9 @@ public class BleedEffect : StatusEffectBase
 
         if (damageTimer <= 0.0f && tickCount > 0)
         {
-            targetHealth.TakeDamage(damage);
+            targetBloodPool?.AddBloodValue(damage);
+            targetHealth?.TakeDamage(damage);
+           
             damageTimer = 1.0f;
             tickCount--;
         }
@@ -61,6 +72,6 @@ public class BleedEffect : StatusEffectBase
 
     public override void OnRemove()
     {
-        targetStatuses.RemoveEffect(this);
+        targetStatuses?.RemoveEffect(this);
     }
 }

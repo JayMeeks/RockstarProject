@@ -11,4 +11,12 @@ public class DaggerHeavyAttackData : BaseWeaponAttackData
     [Tooltip("Maximum range the dagger can be thrown before returning")]
     [SerializeField] public float maxHeavyRange;
     
+    [Tooltip("Amount of damage dealt on a headshot")]
+    [SerializeField] public int criticalHitDamage;
+    
+    [Tooltip("Hp amount player will gain on successful hit")]
+    [SerializeField] public int hpRegainOnHit;
+    
+    
+
 }

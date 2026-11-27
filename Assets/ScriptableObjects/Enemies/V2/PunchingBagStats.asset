@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PunchingBagStats
   maxHealth: 100
   moveSpeed: 0
-  healthOnKill: 0
+  healthOnKill: 10

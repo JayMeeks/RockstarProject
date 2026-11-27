@@ -9,6 +9,7 @@ public class HealthPickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+    
         if (pickedUp || pickupData == null)
             return;
 
@@ -21,6 +22,7 @@ public class HealthPickup : MonoBehaviour
             return;
         }
 
+        Debug.Log("healing");
         bool healed = playerHealth.TryHealOverTime(
             pickupData.healAmount,
             pickupData.healDuration

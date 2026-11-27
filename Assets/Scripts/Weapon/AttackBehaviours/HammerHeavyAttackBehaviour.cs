@@ -27,6 +27,19 @@ public class HammerHeavyAttackBehaviour : MonoBehaviour
    {
       activeData = isEnhanced ? enhancedData : standardData;
       StartCoroutine(MoveWave());
+      Collider[] results = new Collider[16];
+      
+      int hits =
+      Physics.OverlapSphereNonAlloc(
+      position:transform.position,
+      radius:activeData.playerHpGainMaxRange,
+      results: results,
+      layerMask:LayerMask.GetMask("Enemy"));
+      for(int i = 0; i < hits; i++)
+      {
+            PlayerHealthSystem.Instance?.HealPlayer(activeData.hpRegainOnHit);
+      }
+
    }
 
    private IEnumerator MoveWave()
@@ -100,12 +113,12 @@ public class HammerHeavyAttackBehaviour : MonoBehaviour
    private void OnTriggerEnter(Collider other)
    {
      
-      if (other.gameObject.CompareTag("Enemy"))
+      if (other.gameObject.CompareTag("EnemyCriticalHurtbox") || other.gameObject.CompareTag("EnemyStandardHurtbox"))
       {
-         var enemyData = other.gameObject.GetComponent<EnemyInfo>();
+         var enemyData = other.gameObject.GetComponentInParent<EnemyInfo>();
          enemyData.TakeDamage(activeData.attackDamage);
 
-         var enemyController = other.gameObject.GetComponent<IKnockbackable>();
+         var enemyController = other.gameObject.GetComponentInParent<IKnockbackable>();
          enemyController.OnReceiveKnockback((transform.forward + Vector3.up).normalized,activeData.ForceMultiplier);
 
       }

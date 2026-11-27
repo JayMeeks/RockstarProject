@@ -18,6 +18,14 @@ public class HammerHeavyAttackData : BaseWeaponAttackData
     
     [Tooltip("How strong of a force should be used to send the enemy upwards")] 
     [SerializeField] public float ForceMultiplier;
+    
+    [Tooltip("Maximum range at which the player can regain hp from a hit")]
+    [SerializeField] public float playerHpGainMaxRange;
+    
+    [Tooltip("Hp amount player will gain on successful hit")]
+    [SerializeField] public int hpRegainOnHit;
+    
+    
 
 
 

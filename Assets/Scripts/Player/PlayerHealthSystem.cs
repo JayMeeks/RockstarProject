@@ -26,8 +26,14 @@ public class PlayerHealthSystem : MonoBehaviour ,IDamageable
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            SetCurrentHealth(GetMaxHealth());
+            
         }
+    }
+
+    private void Start()
+    {
+       // SetCurrentHealth(GetMaxHealth());
+       SetCurrentHealth(30);
     }
 
     private void OnDestroy()

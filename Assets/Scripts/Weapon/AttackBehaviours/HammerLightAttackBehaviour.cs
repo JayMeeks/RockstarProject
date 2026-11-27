@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ArchieStuff.EnemyArchie;
 using UnityEngine;
 
@@ -24,21 +25,25 @@ public class HammerLightAttackBehaviour : MonoBehaviour
         //Checks for colliders within the attack range of the hammer
         //Applied damage to all enemies within
         Collider[] hits = Physics.OverlapBox(originPosition, data.AttackSize,originRotation);
+        List<GameObject> alreadyHitEnemies = new List<GameObject>();
         for (int i = 0; i < hits.Length; i++)
         {
-            if (hits[i].gameObject.CompareTag("Enemy"))
+            if (hits[i].gameObject.CompareTag("EnemyCriticalHurtbox") || hits[i].gameObject.CompareTag("EnemyStandardHurtbox"))
             {
-                var enemyInfo = hits[i].gameObject.GetComponent<EnemyInfo>();
+                GameObject owningEnemy = hits[i].gameObject.transform.root.gameObject;
+                if (alreadyHitEnemies.Contains(owningEnemy)){return;}
+              
+                var enemyInfo = hits[i].gameObject.GetComponentInParent<EnemyInfo>();
                 enemyInfo.TakeDamage(data.attackDamage);
                 if (Vector3.Distance(originPosition, hits[i].gameObject.transform.position) < maxHealRange)
                 {
                     PlayerHealthSystem.Instance.HealPlayer(healAmount);
                 }
                 
-                var enemyController = hits[i].gameObject.GetComponent<IStunnable>();
+                var enemyController = hits[i].gameObject.GetComponentInParent<IStunnable>();
                 enemyController.OnStunned(10.0f);
                 
-              
+                alreadyHitEnemies.Add(owningEnemy);
             }
         }
         

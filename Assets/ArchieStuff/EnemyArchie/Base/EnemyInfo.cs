@@ -1,19 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
-public abstract class EnemyInfo : MonoBehaviour, IDamageable, IStatusEffectable
+public abstract class EnemyInfo : MonoBehaviour, IDamageable, IStatusEffectable, IDropsBloodPool
 {
     
     private List<StatusEffectBase> _activeStatusEffects = new List<StatusEffectBase>();
+    private Queue<StatusEffectBase> _statusRemoveQueue = new Queue<StatusEffectBase>();
 
 
     protected int CurrentHealth, MaxHealth;
     protected float MoveSpeed;
-    protected int HealthGivenOnKill;
+    protected int bloodPoolValue;
+    
     
     //TEMP
     [Header("Health Bar")]
@@ -63,10 +66,27 @@ public abstract class EnemyInfo : MonoBehaviour, IDamageable, IStatusEffectable
         {
             effect?.Tick();
         }
+
+        for (int i = 0; i < _statusRemoveQueue.Count; i++)
+        {
+            _activeStatusEffects.Remove(_statusRemoveQueue.Dequeue());
+        }
     }
 
     public void RemoveEffect(StatusEffectBase effect)
     { 
-        _activeStatusEffects.Remove(effect);
+        _statusRemoveQueue.Enqueue(effect);
+    }
+
+    public void AddBloodValue(int bloodValue)
+    {
+        bloodPoolValue += bloodValue;
+    }
+
+    public void CreateBloodPool(int bloodPoolValue)
+    {
+        var blood = Instantiate(Resources.Load<GameObject>("Prefabs/BloodPool"),transform.position,Quaternion.identity);
+        var bloodPool = blood.GetComponent<BloodPool>();
+        bloodPool.SetBloodValue(bloodPoolValue);
     }
 }

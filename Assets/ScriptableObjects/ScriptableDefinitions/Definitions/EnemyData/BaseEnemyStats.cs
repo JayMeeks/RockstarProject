@@ -12,5 +12,5 @@ public class BaseEnemyStats : ScriptableObject
     [SerializeField] public float moveSpeed;
     
     [Tooltip("How much health should the enemy drop when killed")]
-    [SerializeField] public float healthOnKill;
+    [SerializeField] public int healthOnKill;
 }
