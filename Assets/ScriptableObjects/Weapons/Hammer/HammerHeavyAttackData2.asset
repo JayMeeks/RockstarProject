@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36019c8e829247346b34a0c440f20273, type: 3}
   m_Name: HammerHeavyAttackData2
   m_EditorClassIdentifier: Assembly-CSharp::HammerHeavyAttackData
-  attackDamage: 10
+  attackDamage: 40
   WaveMoveSpeed: 10
   WaveGrowSpeedWidth: 1
   WaveGrowSpeedHeight: 1
@@ -20,4 +20,4 @@ MonoBehaviour:
   MaxStepHeight: 0.5
   ForceMultiplier: 5
   playerHpGainMaxRange: 3
-  hpRegainOnHit: 20
+  hpRegainOnHit: 25

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0ce68ad17b85724ab08d803f4a1b4e2, type: 3}
   m_Name: DaggerHeavyAttack
   m_EditorClassIdentifier: Assembly-CSharp::DaggerHeavyAttackData
-  attackDamage: 15
+  attackDamage: 20
   throwSpeedMult: 100
   maxHeavyRange: 20
-  criticalHitDamage: 0
-  hpRegainOnHit: 10
+  criticalHitDamage: 30
+  hpRegainOnHit: 20

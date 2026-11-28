@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: HammerWeaponData
   m_EditorClassIdentifier: Assembly-CSharp::HammerWeaponData
   maxDurability: 10
-  playerHpGainOnHit: 5
+  playerHpGainOnHit: 50
   playerHpGainMaxRange: 5
-  lightAttackHpCost: 0
-  heavyAttackHpCost: 5
-  specialAttackHpCost: 0
+  lightAttackHpCost: 25
+  heavyAttackHpCost: 35
+  specialAttackHpCost: 20
   specialForceMultiplier: 1
   slamForceMultiplier: 1

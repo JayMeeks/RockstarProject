@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1966fef340477b241b20576be3956cab, type: 3}
   m_Name: DaggerLightAttack
   m_EditorClassIdentifier: Assembly-CSharp::DaggerLightAttack
-  attackDamage: 90
+  attackDamage: 10
   AttackSize: {x: 1, y: 1, z: 2}
   DebugView: 0
   debugPos: {x: 0, y: 0, z: 0}

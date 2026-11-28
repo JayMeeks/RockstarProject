@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 209de6eb476e5e1449b9d0182da02fa1, type: 3}
   m_Name: RipperStats
   m_EditorClassIdentifier: Assembly-CSharp::RipperStats
-  maxHealth: 100
+  maxHealth: 50
   moveSpeed: 3.5
-  healthOnKill: 0
+  healthOnKill: 10
   attackStartRange: 1
   attackWindup: 1
   attacksToPerform: 2
