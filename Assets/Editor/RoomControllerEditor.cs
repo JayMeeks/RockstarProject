@@ -33,6 +33,17 @@ public class RoomControllerEditor : Editor
 
             Undo.AddComponent<LocationMarker>(marker);
 
+            MeshFilter meshFilter = Undo.AddComponent<MeshFilter>(marker);
+            MeshRenderer meshRenderer = Undo.AddComponent<MeshRenderer>(marker);
+
+            meshFilter.sharedMesh = Resources.GetBuiltinResource<Mesh>("Cylinder.fbx");
+
+            marker.transform.localScale = new Vector3(1f, 0.1f, 1f);
+
+            Material material = AssetDatabase.LoadAssetAtPath<Material>("Assets/Models/Texture/New Material.mat");
+
+            meshRenderer.sharedMaterial = material;
+
             Selection.activeGameObject = marker;
         }
 

@@ -5089,13 +5089,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83a2b1269074b93409f8399274dd845c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomController
-  waveCount: 0
+  waveCount: 3
   entryDoor: {fileID: 0}
-  waves:
-  - subwaves:
-    - enemies:
-      - spawnLocation: {fileID: 0}
-        enemyType: 0
 --- !u!1 &383747007
 GameObject:
   m_ObjectHideFlags: 0
@@ -5140,7 +5135,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70a7d35137d5e2d419669c27b67224f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocationMarker
-  locationName: Spawn Location
+  locationName: Spawn Location 2
+  waves:
+  - shrikeCount: 0
+    ripperCount: 0
+  - shrikeCount: 0
+    ripperCount: 0
+  - shrikeCount: 0
+    ripperCount: 0
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -9164,7 +9166,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70a7d35137d5e2d419669c27b67224f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocationMarker
-  locationName: Spawn Location
+  locationName: Spawn Location 1
+  waves:
+  - shrikeCount: 0
+    ripperCount: 0
+  - shrikeCount: 0
+    ripperCount: 0
+  - shrikeCount: 0
+    ripperCount: 0
 --- !u!1 &886388706
 GameObject:
   m_ObjectHideFlags: 0
@@ -12253,7 +12262,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomController
   waveCount: 0
   entryDoor: {fileID: 0}
-  waves: []
 --- !u!1 &1685609372
 GameObject:
   m_ObjectHideFlags: 0
@@ -12924,7 +12932,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomController
   waveCount: 0
   entryDoor: {fileID: 0}
-  waves: []
 --- !u!4 &1790346796
 Transform:
   m_ObjectHideFlags: 0

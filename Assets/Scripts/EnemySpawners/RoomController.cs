@@ -3,17 +3,19 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 using System.Collections;
+using static UnityEngine.EventSystems.EventTrigger;
+using UnityEngine.Timeline;
 
 public class RoomController : MonoBehaviour
 {
     [Tooltip("The total number of waves in this room.")]
-    [SerializeField] int waveCount;
-    [SerializeField] private GameObject entryDoor;
-    [SerializeField] private List<WaveClass> waves = new List<WaveClass>();
+    [SerializeField] public int waveCount;
+    //[SerializeField] private GameObject entryDoor;
 
     private int waveNumber = 0;
     private int aliveEnemies = 0;
     private List<Transform> spawnPositions = new List<Transform>();
+    private List<LocationMarker> spawnCounts = new List<LocationMarker>();
     private WaveSystem waveSystem;
 
     public event Action OnRoomActivated;
@@ -25,11 +27,13 @@ public class RoomController : MonoBehaviour
         spawnPositions = new List<Transform>(GetComponentsInChildren<Transform>());
         spawnPositions.Remove(transform);
         waveSystem = GetComponentInParent<WaveSystem>();
+        spawnCounts = new List<LocationMarker>(GetComponentsInChildren<LocationMarker>());
     }
 
     public void ActivateRoom()
     {
-        entryDoor.SetActive(false);
+        //entryDoor.SetActive(false);
+        StartCoroutine(StartWaves());
         OnRoomActivated?.Invoke();
     }
 
@@ -43,24 +47,22 @@ public class RoomController : MonoBehaviour
         return waveCount;
     }
 
-    public IEnumerator NextWave()
+    public IEnumerator StartWaves()
     {
-        List<SubwaveClass> subwaves = waves[waveNumber].subwaves;
-
-        foreach (SubwaveClass subwave in subwaves)
+        for (int i = 0; i < waveCount; i++)
         {
-            foreach (EnemyClass enemy in subwave.enemies)
+            foreach (LocationMarker marker in spawnCounts)
             {
-                GameObject enemyPrefab = waveSystem.GetGameObjectForEnemyType(enemy.enemyType);
+                for (int j = 0; j < marker.waves[i].shrikeCount; j++)
+                {
+                    SpawnEnemy(0, marker);
+                }
 
-                //NEXT THING TO DO IS TO ADD LOCATION MARKER AS AN IENUMERATOR AND AS A VARIABLE TO ENEMYCLASS
-                GameObject newEnemy = Instantiate(enemyPrefab, transform.position, transform.rotation);
+                for (int j = 0; j < marker.waves[i].ripperCount; j++)
+                {
+                    SpawnEnemy(1, marker);
+                }
 
-                //EnemyBase enemyScript = newEnemy.GetComponent<EnemyBase>();
-
-                //enemyScript.SetSpawner(this);
-
-                aliveEnemies++;
             }
 
             while (aliveEnemies > 0)
@@ -69,23 +71,49 @@ public class RoomController : MonoBehaviour
             }
         }
 
-        waveNumber++;
+        AllWavesFinished();
+
     }
 
     private void AllWavesFinished()
     {
-        Debug.Log("Wave finished");
         OnWavesFinished?.Invoke();
     }
 
     public void OnRoomEnter()
     {
-        entryDoor.SetActive(true);
-        NextWave();
+        //entryDoor.SetActive(true);
     }
 
     public void EnemyDead()
     {
         aliveEnemies--;
+    }
+
+    private void SpawnEnemy(int enemyType, LocationMarker marker)
+    {
+        GameObject enemyPrefab = waveSystem.GetGameObjectForEnemyType(enemyType);
+
+        Vector3 spawnPosition = GetRandomSpawnPoint(marker);
+
+        GameObject newEnemy = Instantiate(enemyPrefab, spawnPosition, marker.transform.rotation);
+
+        EnemyBase enemyScript = newEnemy.GetComponent<EnemyBase>();
+
+        enemyScript.SetSpawner(this);
+
+        aliveEnemies++;
+    }
+
+    private Vector3 GetRandomSpawnPoint(LocationMarker marker)
+    {
+        Vector3 centre = marker.transform.position;
+        float radius = marker.radius;
+
+        Vector2 randomPoint = UnityEngine.Random.insideUnitCircle * radius;
+
+        Vector3 randomSpawnPosition = centre + new Vector3(randomPoint.x, marker.transform.position.y, randomPoint.y);
+
+        return randomSpawnPosition;
     }
 }

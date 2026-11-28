@@ -25,7 +25,7 @@ public class WaveSystem : MonoBehaviour
     {
         foreach (RoomController room in rooms)
         {
-            room.OnWavesFinished += StartWaves;
+            room.OnWavesFinished += ActivateRoom;
         }
     }
 
@@ -33,57 +33,31 @@ public class WaveSystem : MonoBehaviour
     {
         foreach (RoomController room in rooms)
         {
-            room.OnWavesFinished -= StartWaves;
+            room.OnWavesFinished -= ActivateRoom;
         }
     }
 
-    public void StartWaves()
-    {
-        if (activeRoom != null)
-        {  
-            if (waveNumber > activeRoom.GetWaveCount())
-            {
-                Debug.Log("Room finished");
-                ActivateRoom(rooms[roomNumber]);
-            }
-            else if (roomNumber <= rooms.Count)
-            {
-                activeRoom.NextWave();
-                waveNumber++;
-            }
-            else
-            {
-                Debug.Log("All Rooms Completed");
-            }
-        }
-        else
-        {
-            ActivateRoom(rooms[roomNumber]);
-        }    
-    }
-
-    public void ActivateRoom(RoomController room)
+    public void ActivateRoom()
     {
         if (activeRoom != null)
         {
             activeRoom.DeactivateRoom();
         }
 
-        activeRoom = room;
+        activeRoom = rooms[roomNumber];
         activeRoom.ActivateRoom();
-        waveNumber = 1;
         roomNumber++;
     }
 
-    public GameObject GetGameObjectForEnemyType(EnemyClass.EnemyType enemyType)
+    public GameObject GetGameObjectForEnemyType(int enemyType)
     {
-        if (enemyType is EnemyClass.EnemyType.Melee)
+        if (enemyType == 0)
         {
-            return enemyPrefabs.meleePrefab;
+            return enemyPrefabs.shrikePrefab;
         }
-        else if (enemyType is EnemyClass.EnemyType.Ranged)
+        else if (enemyType == 1)
         {
-            return enemyPrefabs.rangedPrefab;
+            return enemyPrefabs.ripperPrefab;
         }
         else
         {
@@ -94,7 +68,6 @@ public class WaveSystem : MonoBehaviour
     [ContextMenu("Start Waves")]
     public void StartFirstWave()
     {
-        ActivateRoom(rooms[roomNumber]);
-        StartWaves();
+        ActivateRoom();
     }
 }
