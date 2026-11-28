@@ -18,7 +18,7 @@ public class PauseMenu : MonoBehaviour
 
     [SerializeField]private GameObject _menuRoot;
     [SerializeField]private GameObject _pausePanel;
-    private GameObject _optionsPanel;
+    [SerializeField]private GameObject _optionsPanel;
 
     private string _mainMenuScene = "MainMenu";
 
